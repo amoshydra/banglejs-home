@@ -17,13 +17,14 @@ export const AppListItem = ({ app }: AppListItemProps) => {
     >
       <img
         css={css`
-          width: 4rem;
-          height: 4rem;
+          width: 2.5rem;
+          height: 2.5rem;
+          flex: 0 0 2.5rem;
           background-color: rgba(0,0,0,0.2);
         `}
         loading="lazy"
         alt={`screenshot for ${app.name}`}
-        src={BangleJsUrls.appImage(app.id, app.screenshots?.[0])}
+        src={BangleJsUrls.appImage(app.id, app.icon)}
       />
       <div
         css={css`
