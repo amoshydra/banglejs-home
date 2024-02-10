@@ -27,7 +27,7 @@ jobs:
     - run: yarn install --frozen-lockfile
     - run: yarn build
       env:
-        BUILD_PUBLIC_PATH: /banglejs-home/
+        BUILD_PUBLIC_PATH: /banglejs-home
 
     - name: deploy
       uses: peaceiris/actions-gh-pages@v3

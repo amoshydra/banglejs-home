@@ -5,6 +5,6 @@ const BUILD_PUBLIC_PATH = process.env.BUILD_PUBLIC_PATH || '';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: `${BUILD_PUBLIC_PATH}/dist/`,
+  base: `${BUILD_PUBLIC_PATH}/`,
   plugins: [react()],
 })
