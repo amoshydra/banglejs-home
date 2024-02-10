@@ -6,5 +6,10 @@ const BUILD_PUBLIC_PATH = process.env.BUILD_PUBLIC_PATH || '';
 // https://vitejs.dev/config/
 export default defineConfig({
   base: `${BUILD_PUBLIC_PATH}/`,
-  plugins: [react()],
+  plugins: [react({
+    jsxImportSource: "@emotion/react",
+    babel: {
+      plugins: ["@emotion/babel-plugin"],
+    },
+  })],
 })
