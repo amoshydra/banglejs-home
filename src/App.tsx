@@ -1,39 +1,34 @@
 import { useState } from 'react';
 import './App.css'
 import { BangleJsAppFilters, BangleJsAppSortType, useApps } from './api/banglejs/methods';
-import { AppListItem } from './components/AppListItem';
-import { css } from '@emotion/react';
+import { AppList } from './components/AppList';
+import { AppListControls } from './components/AppListControls';
 
 function App() {
   const [ sortedBy, setSortedBy ] = useState<BangleJsAppSortType>("modified");
   const [ filters, setFilters ] = useState<BangleJsAppFilters>({});
-  const { data: apps, error, isLoading } = useApps({
+  const { data, error, isLoading } = useApps({
     sortedBy,
     filters,
   });
 
-  if (isLoading) {
-    return <div>Fetching store...</div>
-  }
-  if (error) {
-    return <div>Error fetching store, please try again later...</div>
-  }
-
   return (
-    <div
-      css={css`
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-      `}
-    >
-      {
-        apps!.map(app => {
-          return (
-            <AppListItem key={app.id} app={app} />
-          )
-        })
-      }
+    <div>
+      <AppListControls
+        value={{
+          sortedBy,
+          filters,
+        }}
+        onValueChange={({ filters, sortedBy }) => {
+          setSortedBy(sortedBy);
+          setFilters(filters);
+        }}
+      />
+      <AppList
+        data={data || []}
+        error={error}
+        isLoading={isLoading}
+      />
     </div>
   )
 }
