@@ -9,7 +9,7 @@ export type BangleJsAppSortType = (
   | "created"
 );
 export type BangleJsAppFilters = {
-  [V in keyof AppItem]?: RegExp;
+  [V in keyof AppItem]?: RegExp | ((value: AppItem[V]) => boolean);
 }
 
 export interface UseAppsOptions {
@@ -20,8 +20,12 @@ export interface UseAppsOptions {
 export const useApps = (options: UseAppsOptions) => {
   const appFetchInfo = useSortedApps(options.sortedBy);
 
-  const filteredApps = appFetchInfo.data?.filter(() => {
-    return true;
+  const filterEntries = Object.entries(options.filters)
+
+  const filteredApps = appFetchInfo.data?.filter((app) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return filterEntries.every(([key, filter]) => typeof filter === "function" ? filter(app[key]) : filter.test(app[key] as string))
   });
 
   return {
