@@ -28,6 +28,7 @@ export const AppListItem = ({ app }: AppListItemProps) => {
       />
       <div
         css={css`
+          min-width: 0;
         `}
       >
         <div
