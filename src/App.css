@@ -1,9 +1,17 @@
 *, *::before, *::after {
   box-sizing: border-box;
 }
+body {
+  margin: 0 auto;
+}
 #root {
   max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
   min-width: 0;
+}
+
+/* Required to implement nested scroller on the layout component*/
+:root,
+body,
+#root {
+  height: 100%;
 }

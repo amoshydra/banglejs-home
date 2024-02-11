@@ -1,14 +1,15 @@
 import { css } from "@emotion/react";
 import { AppItem } from "../api/banglejs/interface";
 import { AppListItem } from "./AppListItem";
+import { HTMLAttributes } from "react";
 
-export interface AppListProps {
+export interface AppListProps extends HTMLAttributes<HTMLDivElement> {
   isLoading: boolean;
   error: Error | null;
   data: AppItem[]
 }
 
-export const AppList = ({ isLoading, error, data: apps }: AppListProps) => {
+export const AppList = ({ isLoading, error, data: apps, ...props }: AppListProps) => {
 
   if (isLoading) {
     return <div>Fetching store...</div>
@@ -19,6 +20,7 @@ export const AppList = ({ isLoading, error, data: apps }: AppListProps) => {
 
   return (
     <div
+      {...props}
       css={css`
         display: flex;
         flex-direction: column;
