@@ -14,6 +14,33 @@ const chain = unified()
   .use(remarkGfm)
   .use(remarkRehype, {
     handlers: {
+      image: (state, node) => {
+        const urlString = node.url;
+        if (urlString.startsWith('/') || urlString.startsWith('http://') || urlString.startsWith('https://')) {
+          const url = new URL(node.url, "https://banglejs.com/");
+          return state.all({
+            ...node,
+            properties: {
+              ...node.properties,
+              src: url.href,
+            },
+          });
+        }
+
+        const appId = location.hash.startsWith('#/apps/') ? location.hash.split('/')[2] : '_';
+        const url = new URL(node.url, `https://banglejs.com/apps/apps/${appId}/`);
+
+        return {
+          type: "element",
+          tagName: "img",
+          properties: {
+            src: url.href,
+            title: node.title,
+            alt: node.alt || node.url,
+          },
+          children: state.all(node),
+        };
+      },
       link: (state, node) => {
         let url = new URL(node.url, location.origin);
 
