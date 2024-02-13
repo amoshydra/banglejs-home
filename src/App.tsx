@@ -1,22 +1,32 @@
 import './App.css'
 import {
-  createBrowserRouter,
+  createHashRouter,
+  createRoutesFromElements,
   RouterProvider,
   Route,
-  createRoutesFromElements,
-  Outlet
+  Outlet,
+  redirect,
 } from "react-router-dom";
 import App from './views/Apps';
 
-
-const router = createBrowserRouter(
+const router = createHashRouter(
   createRoutesFromElements(
     <Route
-      path="/apps"
-      element={<Outlet />}
+      path="/"
     >
-      <Route path="" element={<App />} />
-      <Route path=":appId" element={<App />} />
+      <Route
+        path=""
+        loader={() => {
+          throw redirect("/apps");
+        }}
+      />
+      <Route
+        path="/apps"
+        element={<Outlet />}
+      >
+        <Route path="" element={<App />} />
+        <Route path=":appId" element={<App />} />
+      </Route>
     </Route>
   )
 );
