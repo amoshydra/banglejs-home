@@ -7,9 +7,10 @@ export interface AppListProps extends HTMLAttributes<HTMLDivElement> {
   isLoading: boolean;
   error: Error | null;
   data: AppItem[]
+  onItemClick: (appId: string) => void;
 }
 
-export const AppList = ({ isLoading, error, data: apps, ...props }: AppListProps) => {
+export const AppList = ({ onItemClick, isLoading, error, data: apps, ...props }: AppListProps) => {
 
   if (isLoading) {
     return <div>Fetching store...</div>
@@ -30,7 +31,13 @@ export const AppList = ({ isLoading, error, data: apps, ...props }: AppListProps
       {
         apps!.map(app => {
           return (
-            <AppListItem key={app.id} app={app} />
+            <AppListItem
+              key={app.id}
+              app={app}
+              onClick={() => {
+                onItemClick(app.id)
+              }}
+            />
           )
         })
       }

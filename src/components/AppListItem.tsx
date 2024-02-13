@@ -4,11 +4,13 @@ import * as BangleJsUrls from "../api/banglejs/urls";
 
 interface AppListItemProps {
   app: AppItem;
+  onClick?: () => void;
 }
 
-export const AppListItem = ({ app }: AppListItemProps) => {
+export const AppListItem = ({ app, onClick }: AppListItemProps) => {
   return (
     <div
+      onClick={onClick}
       css={css`
         display: flex;
         align-items: flex-start;

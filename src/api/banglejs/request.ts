@@ -52,3 +52,11 @@ export const getAppDates = async () => {
     )
   );
 };
+
+export const getAppReadme = async (id: string, readmePath?: string) => {
+  const urlPath = BamgleJsUrls.appReadme(id, readmePath);
+  if (!urlPath) return "";
+
+  const { data: markdown } = await requestText<string>(urlPath);
+  return markdown;
+};

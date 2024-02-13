@@ -1,5 +1,5 @@
 import { AppItem } from './interface';
-import { getAppDates, getAppUsage, getApps } from './request';
+import { getAppDates, getAppReadme, getAppUsage, getApps } from './request';
 import useSWRImmutable from "swr/immutable";
 
 export type BangleJsAppSortType = (
@@ -22,7 +22,9 @@ export const useApps = (options: UseAppsOptions) => {
 
   const filterEntries = Object.entries(options.filters)
 
-  const filteredApps = appFetchInfo.data?.filter((app) => {
+  const allApps = appFetchInfo.data || []
+
+  const filteredApps = allApps.filter((app) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return filterEntries.every(([key, filter]) => typeof filter === "function" ? filter(app[key]) : filter.test(app[key] as string))
@@ -30,9 +32,16 @@ export const useApps = (options: UseAppsOptions) => {
 
   return {
     ...appFetchInfo,
-    data: filteredApps,
+    data: {
+      filtered: filteredApps,
+      apps: allApps,
+    },
   };
 };
+
+export const useAppReadme = (id: string, readmePath?: string) => {
+  return useSWRImmutable(`${id}/readme`, () => getAppReadme(id, readmePath));
+}
 
 const useSortedApps = (sortedBy: BangleJsAppSortType) => {
   const responseApps = useSWRImmutable("/apps", getApps);

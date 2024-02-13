@@ -5,24 +5,26 @@ interface LayoutProps {
   top?: ReactNode;
   children?: ReactNode;
   bottom?: ReactNode;
+  className?: string;
 }
-export const Layout = ({ top, children, bottom }: LayoutProps) => {
+export const Layout = (p: LayoutProps) => {
   return (
     <div
+      className={p.className}
       css={css`
         display: flex;
         flex-direction: column;
         height: 100%;
       `}
     >
-      <div>{top}</div>
+      <div>{p.top}</div>
       <div
         css={css`
           flex-grow: 1;
           overflow: auto;
         `}
-      >{children}</div>
-      <div>{bottom}</div>
+      >{p.children}</div>
+      <div>{p.bottom}</div>
     </div>
   )
 }

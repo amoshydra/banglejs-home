@@ -1,45 +1,31 @@
-import { useState } from 'react';
 import './App.css'
-import { BangleJsAppFilters, BangleJsAppSortType, useApps } from './api/banglejs/methods';
-import { AppList } from './components/AppList';
-import { AppListControls } from './components/AppListControls';
-import { Layout } from './components/Layout';
-import { css } from '@emotion/react';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Route,
+  createRoutesFromElements,
+  Outlet
+} from "react-router-dom";
+import App from './views/Apps';
 
-function App() {
-  const [ sortedBy, setSortedBy ] = useState<BangleJsAppSortType>("modified");
-  const [ filters, setFilters ] = useState<BangleJsAppFilters>({});
-  const { data, error, isLoading } = useApps({
-    sortedBy,
-    filters,
-  });
 
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route
+      path="/apps"
+      element={<Outlet />}
+    >
+      <Route path="" element={<App />} />
+      <Route path=":appId" element={<App />} />
+    </Route>
+  )
+);
+
+
+function Entry() {
   return (
-    <Layout
-      top={
-        <AppListControls
-          value={{
-            sortedBy,
-            filters,
-          }}
-          onValueChange={({ filters, sortedBy }) => {
-            setSortedBy(sortedBy);
-            setFilters(filters);
-          }}
-        />
-      }
-      children={
-        <AppList
-          css={css`
-            padding: 1.5rem;
-          `}
-          data={data || []}
-          error={error}
-          isLoading={isLoading}
-        />
-      }
-    />
+    <RouterProvider router={router} />
   )
 }
 
-export default App
+export default Entry
