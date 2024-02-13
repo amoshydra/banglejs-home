@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import { useAppReadme } from "../../api/banglejs/methods";
 import { AppDetailViewProps } from "./interface";
+import { MarkdownRenderer } from "./MarkdownRenderer";
 
 export const Readme = ({ app, className }: AppDetailViewProps) => {
   const { data, isLoading, error } = useAppReadme(app.id, app.readme);
@@ -15,7 +16,7 @@ export const Readme = ({ app, className }: AppDetailViewProps) => {
       return <span>Error loading readme</span>;
     }
 
-    return data;
+    return <MarkdownRenderer input={data} />;
   })();
 
   return (
@@ -25,9 +26,10 @@ export const Readme = ({ app, className }: AppDetailViewProps) => {
         padding: 1rem;
         background: rgba(0, 0, 0, 0.25);
         overflow: auto;
+        font-size: 1rem;
       `}
     >
-      <pre>{children}</pre>
+      {children}
     </div>
   );
 };
