@@ -3,6 +3,7 @@ import * as Urls from "../../api/banglejs/urls";
 import { ReactNode } from "react";
 import { AppDetailViewProps } from "./interface";
 import { Readme } from "./Readme";
+import { AppStorageController } from "./AppStorageController";
 
 export const AppDetailView = ({ app, className }: AppDetailViewProps) => {
   return (
@@ -15,6 +16,7 @@ export const AppDetailView = ({ app, className }: AppDetailViewProps) => {
       `}
     >
       <Heading app={app} />
+      <AppStorageController app={app} />
       <p>{app.description}</p>
       <Screenshost app={app} />
       <Readme app={app} />
