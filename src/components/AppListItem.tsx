@@ -36,7 +36,7 @@ export const AppListItem = ({ app, onClick }: AppListItemProps) => {
         <div
           css={css`
           `}
-        >{ app.name }</div>
+        >{app.name}</div>
         <div
           css={css`
             display: -webkit-box;
@@ -45,11 +45,12 @@ export const AppListItem = ({ app, onClick }: AppListItemProps) => {
             overflow: hidden;
             opacity: 0.5;
           `}
-        >{ app.description }</div>
+        >{app.description}</div>
         <AppTags
           css={css`
             margin-top: 0.5rem;
           `}
+          type={app.type}
           tags={app.tags}
         />
       </div>
@@ -57,29 +58,40 @@ export const AppListItem = ({ app, onClick }: AppListItemProps) => {
   )
 };
 
-const AppTags = ({ tags = "", className }: { tags: string, className?: string }) => {
-  const tagItems = [...new Set(tags.split(',').map(v => v.trim())).values()].sort();
+const AppTags = ({ type = "", tags = "", className }: { type?: string, tags: string, className?: string }) => {
+  const tagItems = (
+    Array.from(
+      new Set(
+        tags
+          .split(',')
+          .map(v => v.trim())
+          .filter(v => v !== type)
+        ).values()
+    )
+      .sort()
+  );
 
   return (
     <div
       className={className}
       css={css`
         display: flex;
-        gap: 0.5rem;
+        gap: 0.25rem;
         flex-wrap: wrap;
       `}
     >
+      {type && (
+        <div
+          key={type}
+          css={cssTag}
+        >
+          {type}
+        </div>
+      )}
       {tagItems.map(tag => (
-        <div 
+        <div
           key={tag}
-          css={css`
-            background: rgba(0, 0, 0, 0.7);
-            padding: 2px 4px;
-            border-radius: 0.25rem;
-            text-transform: lowercase;
-            font-size: 0.75rem;
-            opacity: 0.5;
-          `}
+          css={cssTag}
         >
           {tag}
         </div>
@@ -87,3 +99,12 @@ const AppTags = ({ tags = "", className }: { tags: string, className?: string })
     </div>
   )
 };
+
+const cssTag = css`
+  background: rgba(0, 0, 0, 0.7);
+  padding: 2px 4px;
+  border-radius: 0.25rem;
+  text-transform: lowercase;
+  font-size: 0.75rem;
+  opacity: 0.5;
+`;
