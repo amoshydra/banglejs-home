@@ -46,8 +46,6 @@ export const AppStorageController = (props: AppDetailViewProps) => {
 }
 
 
-// const VoidButton = (props) => <button {...props} />
-const VoidButton = (props: HTMLAttributes<HTMLButtonElement>) => <span {...props} css={cssButton} />
 const Button = (props: HTMLAttributes<HTMLButtonElement>) => <button {...props} css={cssButton} />
 
 const cssButton = css`

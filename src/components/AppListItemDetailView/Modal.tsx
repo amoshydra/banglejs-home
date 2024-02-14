@@ -1,6 +1,9 @@
 import { css } from "@emotion/react";
 import { ReactNode } from "react";
 import { Layout } from "../Layout";
+import { SmallButton } from "../Buttons/SmallButton";
+import { ButtonIconContainer } from "../Buttons/ButtonIconContainer";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
 export interface ModalProps {
   children?: ReactNode;
@@ -32,12 +35,16 @@ export const Modal = (p: ModalProps) => {
               background: rgba(75, 75, 75, 0.9);
               display: flex;
               justify-content: space-between;
-            `}          
+            `}
           >
             <div>
-              <button
+              <SmallButton
                 onClick={() => p.onDismiss?.()}
-              >&lt; Back</button>
+              >
+                <ButtonIconContainer
+                  leftIcon={faChevronLeft}
+                />
+              </SmallButton>
             </div>
             <div>
             </div>
