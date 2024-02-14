@@ -152,7 +152,7 @@ const useToggleButton = () => {
           padding: 4px 8px;
         `}
         onClick={() => setVisible(v => !v)}
-      >{visible}</button>
+      >{"Filters"} {visible ? "v" : "^"}</button>
     ),
   };
 };
