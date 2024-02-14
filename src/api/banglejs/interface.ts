@@ -26,6 +26,14 @@ export interface AppItem {
   /**
    * @example "tool,outdoors,gps"
    */
+  /**
+   * @example "RAM"
+   * @example "clock"
+   * @example "app"
+   * @example "textinput"
+   * @example "textinput"
+   */
+  type?: string;
   tags: string;
   supports: ("BANGLEJS" | "BANGLEJS2")[];
   screenshots: AppItemScreenshot[];
@@ -35,6 +43,17 @@ export interface AppItem {
   readme: string;
   dependencies: Record<string, string>;
   storage: AppItemStorage[];
+  /**
+   * @example "custom.html"
+   */
+  custom?: string;
+  customConnect?: boolean;
+  allow_emulator?: boolean;
+  /**
+   * @example "interface.html"
+   */
+  interface?: string;
+
 }
 
 export interface AppItemScreenshot {
