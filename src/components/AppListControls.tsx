@@ -97,14 +97,32 @@ const FormInput = <T,>({ name, label, inputMethod, value, onValueChange }: FormI
   return (
     <div>
       {
-        inputMethod.type === "radio" && (
+        (
+          inputMethod.type === "radio" ||
+          inputMethod.type === "checkbox"
+        ) && (
           <fieldset>
-            <div>{label}</div>
+            <div
+              css={css`
+                margin-bottom: 1rem;
+              `}
+            >{label}</div>
             {
               inputMethod.options.map(option => (
-                <label>
+                <label
+                  css={css`
+                    display: inline-flex;
+                    margin: 8px;
+                    margin-left: 0;
+                    margin-top: 0;
+                    border-radius: 12px;
+                    padding: 4px 8px 4px 4px;
+                    background: black;
+                    gap: 4px;
+                  `}
+                >
                   <input
-                    type="radio"
+                    type={inputMethod.type}
                     checked={option.value === value}
                     value={option.label}
                     onChange={() => {
