@@ -1,5 +1,5 @@
 import { AppItem } from "../api/banglejs/interface";
-import { pick, capitalize } from "lodash/fp";
+import { capitalize } from "lodash/fp";
 
 export const sortControl = {
   key: "__sortedBy",
