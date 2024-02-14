@@ -58,7 +58,7 @@ export const AppListItem = ({ app, onClick }: AppListItemProps) => {
 };
 
 const AppTags = ({ tags = "", className }: { tags: string, className?: string }) => {
-  const tagItems = tags.split(',').map(v => v.trim()).sort();
+  const tagItems = [...new Set(tags.split(',').map(v => v.trim())).values()].sort();
 
   return (
     <div
