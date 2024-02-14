@@ -110,6 +110,7 @@ const FormInput = <T,>({ name, label, inputMethod, value, onValueChange }: FormI
             {
               inputMethod.options.map(option => (
                 <label
+                  key={option.label}
                   css={css`
                     display: inline-flex;
                     margin: 8px;
