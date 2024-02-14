@@ -7,6 +7,8 @@ body {
 #root {
   max-width: 1280px;
   min-width: 0;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Required to implement nested scroller on the layout component*/
@@ -14,4 +16,5 @@ body {
 body,
 #root {
   height: 100%;
+  width: 100%;
 }
