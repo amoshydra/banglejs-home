@@ -1,8 +1,10 @@
 import { css } from "@emotion/react";
 import { BangleJsAppFilter, BangleJsAppFilterMap, BangleJsAppSortType } from "../api/banglejs/methods";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { AppItem } from "../api/banglejs/interface";
 import { InputMethod, filterControlMap, sortControl } from "../data/appListControlOptions";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 export interface AppListControlValue {
   filters: BangleJsAppFilterMap;
@@ -148,11 +150,43 @@ const useToggleButton = () => {
     visible,
     button: (
       <button
+        type="button"
         css={css`
           padding: 4px 8px;
         `}
         onClick={() => setVisible(v => !v)}
-      >{"Filters"} {visible ? "v" : "^"}</button>
+      >
+        <ToggleButtonChevron
+          expanded={visible}
+          children="Filters"
+        />
+      </button>
     ),
   };
 };
+
+
+
+const ToggleButtonChevron = (p: { children: ReactNode, expanded: boolean }) => {
+  return (
+    <span css={css`
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    `}>
+      <span>{p.children}</span>
+      <FontAwesomeIcon
+        size="xs"
+        icon={faChevronRight}
+        css={css`
+          transition: transform 0.25s;
+          transform: rotate(0);
+          ${p.expanded && cssRotate180}
+        `}
+      />
+    </span>
+  )
+}
+const cssRotate180 = css`
+  transform: rotate(90deg);
+`
