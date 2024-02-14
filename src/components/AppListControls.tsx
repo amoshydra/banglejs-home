@@ -148,6 +148,9 @@ const useToggleButton = () => {
     visible,
     button: (
       <button
+        css={css`
+          padding: 4px 8px;
+        `}
         onClick={() => setVisible(v => !v)}
       >{visible}</button>
     ),
