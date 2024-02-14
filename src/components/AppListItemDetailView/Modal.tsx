@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import { ReactNode } from "react";
 import { Layout } from "../Layout";
-import { SmallButton } from "../Buttons/SmallButton";
+import { UiButton } from "../Buttons/UiButton";
 import { ButtonIconContainer } from "../Buttons/ButtonIconContainer";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
@@ -31,20 +31,21 @@ export const Modal = (p: ModalProps) => {
         top={
           <div
             css={css`
-              padding: 1rem;
+              padding: 0.5rem;
               background: rgba(75, 75, 75, 0.9);
               display: flex;
               justify-content: space-between;
             `}
           >
             <div>
-              <SmallButton
+              <UiButton
+                size="xs"
                 onClick={() => p.onDismiss?.()}
               >
                 <ButtonIconContainer
                   leftIcon={faChevronLeft}
                 />
-              </SmallButton>
+              </UiButton>
             </div>
             <div>
             </div>

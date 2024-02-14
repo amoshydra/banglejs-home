@@ -1,6 +1,8 @@
 import { css } from "@emotion/react";
 import { AppDetailViewProps } from "./interface";
-import { HTMLAttributes } from "react";
+import { UiButton } from "../Buttons/UiButton";
+import { ButtonIconContainer } from "../Buttons/ButtonIconContainer";
+import { faGear, faDownload } from "@fortawesome/free-solid-svg-icons";
 
 interface ControlButtonProps extends AppDetailViewProps {
   hasConfiguration: boolean;
@@ -10,14 +12,38 @@ interface ControlButtonProps extends AppDetailViewProps {
 
 const InstallControlButton = (props: ControlButtonProps) => {
   if (props.hasUpdate) {
-    return <Button>Update</Button>
+    return (
+      <UiButton fullWidth>
+        <ButtonIconContainer
+          leftIcon={faDownload}
+        >
+          Update
+        </ButtonIconContainer>
+      </UiButton>
+    )
   }
 
-  return <Button>Install</Button>
+  return (
+    <UiButton fullWidth>
+      <ButtonIconContainer
+        leftIcon={faDownload}
+      >
+        Install
+      </ButtonIconContainer>
+    </UiButton>
+  )
 };
 const ConfigureControlButton = (props: ControlButtonProps) => {
     if (props.hasConfiguration) {
-      return <Button {...props}>Configure</Button>
+      return (
+        <UiButton fullWidth>
+          <ButtonIconContainer
+            leftIcon={faGear}
+          >
+            Configure
+          </ButtonIconContainer>
+        </UiButton>
+      );
     }
   
     return null
@@ -44,12 +70,3 @@ export const AppStorageController = (props: AppDetailViewProps) => {
     </div>
   )
 }
-
-
-const Button = (props: HTMLAttributes<HTMLButtonElement>) => <button {...props} css={cssButton} />
-
-const cssButton = css`
-  width: 100%;
-  padding: 1rem;
-  font-size: 1rem;
-`;

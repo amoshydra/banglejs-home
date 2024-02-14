@@ -1,11 +1,11 @@
 import { css } from "@emotion/react";
 import { BangleJsAppFilter, BangleJsAppFilterMap, BangleJsAppSortType } from "../api/banglejs/methods";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { AppItem } from "../api/banglejs/interface";
 import { InputMethod, filterControlMap, sortControl } from "../data/appListControlOptions";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { ButtonIconContainer } from "./Buttons/ButtonIconContainer";
+import { UiButton } from "./Buttons/UiButton";
 
 export interface AppListControlValue {
   filters: BangleJsAppFilterMap;
@@ -150,8 +150,8 @@ const useToggleButton = () => {
   return {
     visible,
     button: (
-      <button
-        type="button"
+      <UiButton
+        size="xs"
         css={css`
           padding: 4px 8px;
         `}
@@ -167,7 +167,7 @@ const useToggleButton = () => {
         >
           Filters
         </ButtonIconContainer>
-      </button>
+      </UiButton>
     ),
   };
 };
