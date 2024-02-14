@@ -8,27 +8,26 @@ export type BangleJsAppSortType = (
   | "modified"
   | "created"
 );
-export type BangleJsAppFilters = {
-  [V in keyof AppItem]?: RegExp | ((value: AppItem[V]) => boolean);
+
+export type BangleJsAppFilter = (value: AppItem) => boolean;
+export type BangleJsAppFilterMap = {
+  [V in keyof AppItem]?: BangleJsAppFilter;
 }
 
 export interface UseAppsOptions {
   sortedBy: BangleJsAppSortType,
-  filters: BangleJsAppFilters,
+  filters: BangleJsAppFilterMap,
 }
 
 export const useApps = (options: UseAppsOptions) => {
   const appFetchInfo = useSortedApps(options.sortedBy);
 
-  const filterEntries = Object.entries(options.filters)
-
   const allApps = appFetchInfo.data || []
-
-  const filteredApps = allApps.filter((app) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return filterEntries.every(([key, filter]) => typeof filter === "function" ? filter(app[key]) : filter.test(app[key] as string))
-  });
+  
+  const filters = Object.values(options.filters);
+  const filteredApps = allApps.filter((app) =>
+    filters.every((filter) => filter(app))
+  );
 
   return {
     ...appFetchInfo,

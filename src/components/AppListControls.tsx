@@ -1,37 +1,37 @@
 import { css } from "@emotion/react";
-import { BangleJsAppFilters, BangleJsAppSortType } from "../api/banglejs/methods";
+import { BangleJsAppFilter, BangleJsAppFilterMap, BangleJsAppSortType } from "../api/banglejs/methods";
 import { useState } from "react";
 import { AppItem } from "../api/banglejs/interface";
+import { InputMethod, filterControlMap, sortControl } from "../data/appListControlOptions";
 
 export interface AppListControlValue {
-  filters: BangleJsAppFilters;
+  filters: BangleJsAppFilterMap;
   sortedBy: BangleJsAppSortType;
 }
 
+const filterInputs = (
+  Object
+    .entries(filterControlMap)
+    .map(([key, value]) => ({ key: key as keyof AppItem, ...value }))
+);
+
 export interface AppListControlsProps {
-  value: AppListControlValue;
-  onValueChange: (v: AppListControlValue) => void;
+  filters: BangleJsAppFilterMap;
+  onFilterChange: (key: keyof AppItem, changedFilter?: BangleJsAppFilter) => void;
+  sortedBy: BangleJsAppSortType;
+  onSortedByChange: (sortedBy: BangleJsAppSortType) => void;
 }
 
-const filters = {
-  supports: {
-    type: "choices",
-    options: [
-      { label: "all", value: () => true },
-      { label: "BangleJS 1", value: (v: AppItem["supports"]) => v.includes('BANGLEJS')},
-      { label: "BangleJS 2", value: (v: AppItem["supports"]) => v.includes('BANGLEJS2')},
-    ]
-  },
-};
-const sortedByOptions = [
-  { label: "Favourited", value: "favourited" },
-  { label: "Installed", value: "installed" },
-  { label: "Modified", value: "modified" },
-  { label: "Created", value: "created" },
-] as const;
+export const AppListControls = (p: AppListControlsProps) => {
+  const {
+    filters,
+    onFilterChange,
+    sortedBy,
+    onSortedByChange,
+  } = p;
 
-export const AppListControls = ({ value, onValueChange }: AppListControlsProps) => {
   const { visible, button } = useToggleButton();
+
   return (
     <>
       <div
@@ -39,6 +39,7 @@ export const AppListControls = ({ value, onValueChange }: AppListControlsProps) 
           display: flex;
           justify-content: space-between;
           padding: 0.5rem;
+          width: 100%;
         `}
       >
         <div>BangleJS Home</div>
@@ -55,57 +56,71 @@ export const AppListControls = ({ value, onValueChange }: AppListControlsProps) 
           `}
         >
           <div>
+            <FormInput
+              {...sortControl}
+              name={sortControl.key}
+              value={sortedBy}
+              onValueChange={(value) => onSortedByChange(value)}
+            />
             {
-              sortedByOptions.map(item => {
-                return (
-                  <button
-                    css={css`
-                      color: ${value.sortedBy === item.value ? 'green' : 'currentColor'}
-                    `}
-                    onClick={() => {
-                      onValueChange({
-                        ...value,
-                        sortedBy: item.value,
-                      })
-                    }}
-                    key={item.label}
-                  >
-                    {item.label}
-                  </button>
-                )
-              })
+              filterInputs
+                .map(({ key, ...input }) => {
+                  return (
+                    <FormInput
+                      key={key}
+                      {...input}
+                      name={key}
+                      value={filters[key]}
+                      onValueChange={(value) => onFilterChange(key, value)}
+                    />
+                  )
+                })
             }
-          </div>
-          <div>
-            {
-              filters.supports.options.map(item => {
-                return (
-                  <button
-                    css={css`
-                      color: ${value.filters.supports === item.value ? 'green' : 'currentColor'}
-                    `}
-                    onClick={() => {
-                      onValueChange({
-                        ...value,
-                        filters: {
-                          ...value.filters,
-                          supports: item.value,
-                        },
-                      })
-                    }}
-                    key={item.label}
-                  >
-                    {item.label}
-                  </button>
-                )
-              })
-            }
-
           </div>
         </div>
       )}
     </>
   );
+};
+
+
+
+interface FormInputProps<T> {
+  name: string;
+  label: string;
+  inputMethod: InputMethod<T>;
+  value: T;
+  onValueChange: (v: T) => void;
+}
+
+const FormInput = <T,>({ name, label, inputMethod, value, onValueChange }: FormInputProps<T>) => {
+  return (
+    <div>
+      {
+        inputMethod.type === "radio" && (
+          <fieldset>
+            <div>{label}</div>
+            {
+              inputMethod.options.map(option => (
+                <label>
+                  <input
+                    type="radio"
+                    checked={option.value === value}
+                    value={option.label}
+                    onChange={() => {
+                      onValueChange(option.value);
+                    }}
+                    name={name}
+                  />
+                  <span>{option.label}</span>
+                </label>
+              ))
+            }
+          </fieldset>
+        )
+      }
+    </div>
+  )
 };
 
 const useToggleButton = () => {

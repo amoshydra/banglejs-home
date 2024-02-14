@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { BangleJsAppFilters, BangleJsAppSortType, useApps } from '../../api/banglejs/methods';
+import { useApps } from '../../api/banglejs/methods';
 import { AppList } from '../../components/AppList';
 import { AppListControls } from '../../components/AppListControls';
 import { Layout } from '../../components/Layout';
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AppListItemDetailView } from '../../components/AppListItemDetailView/AppListItemDetailView';
+import { useAppListControl } from '../../hooks/appListControl';
 
 function App() {
-  const [ sortedBy, setSortedBy ] = useState<BangleJsAppSortType>("modified");
-  const [ filters, setFilters ] = useState<BangleJsAppFilters>({});
+  const { filters, setFilter, sortedBy, setSortedBy } = useAppListControl();
   const { data, error, isLoading } = useApps({
     sortedBy,
     filters,
   });
+
 
   const { appId } = useParams();
   const navigate = useNavigate();
@@ -22,14 +22,10 @@ function App() {
     <Layout
       top={
         <AppListControls
-          value={{
-            sortedBy,
-            filters,
-          }}
-          onValueChange={({ filters, sortedBy }) => {
-            setSortedBy(sortedBy);
-            setFilters(filters);
-          }}
+          filters={filters}
+          sortedBy={sortedBy}
+          onFilterChange={setFilter}
+          onSortedByChange={setSortedBy}
         />
       }
       children={
