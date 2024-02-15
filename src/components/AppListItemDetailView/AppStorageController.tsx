@@ -2,17 +2,22 @@ import { css } from "@emotion/react";
 import { AppDetailViewProps } from "./interface";
 import { UiButton } from "../Buttons/UiButton";
 import { ButtonIconContainer } from "../Buttons/ButtonIconContainer";
-import { faGear, faDownload, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faGear, faDownload, faTrash, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { EspruinoComms } from "../../services/Espruino/Comms";
-import { useEffect, useState } from "react";
+import { useEspruinoDeviceInfoStore } from "../../services/Espruino/stores/EspruinoDevice";
+import { EspruinoDeviceInfo } from "../../services/Espruino/interface";
+import { AppItem } from "../../api/banglejs/interface";
 
 interface ControlButtonProps extends AppDetailViewProps {
+  device: EspruinoDeviceInfo | null;
   hasConfiguration: boolean;
   hasUpdate: boolean;
   hasInstalled: boolean;
 }
 
 const InstallControlButton = (props: ControlButtonProps) => {
+  const refresh = useEspruinoDeviceInfoStore(state => state.refresh);
+
   if (props.hasUpdate) {
     return (
       <UiButton fullWidth>
@@ -25,12 +30,47 @@ const InstallControlButton = (props: ControlButtonProps) => {
     )
   }
 
+  const setActive = async (app: AppItem) => {
+    if (app.type === "clock" || app.type === "launcher") {
+      const settings = await EspruinoComms.readFile("setting.json");
+      await EspruinoComms.writeFile("setting.json", JSON.stringify({
+        ...JSON.parse(settings),
+        [app.type]: `${app.id}.app.js`,
+      }))
+      EspruinoComms.resetDevice()
+      await refresh();
+    }
+  };
+
+  if (props.hasInstalled && props.app.type && ["clock", "launcher"].includes(props.app.type)) {
+    return (
+      <UiButton
+        fullWidth
+        onClick={async () => {
+          try {
+            await setActive(props.app);
+          } catch (error) {
+            alert((error as Error).message);
+            throw error;
+          }
+        }}
+      >
+        <ButtonIconContainer
+          leftIcon={faCheck}
+        >
+          Set active
+        </ButtonIconContainer>
+      </UiButton>
+    )
+  }
+
   return (
     <UiButton
       fullWidth
+      disabled={props.hasInstalled}
       onClick={async () => {
         try {
-          const deviceInfo = await EspruinoComms.getDeviceInfo();
+          const deviceInfo = props.device || await EspruinoComms.getDeviceInfo();
           const device = {
             ...deviceInfo,
             appsInstalled: deviceInfo.apps,
@@ -56,15 +96,7 @@ const InstallControlButton = (props: ControlButtonProps) => {
           }
 
           await EspruinoComms.uploadApp(props.app, { device });
-          if (props.app.type === "clock") {
-            const settings = await EspruinoComms.readFile("setting.json");
-            await EspruinoComms.writeFile("setting.json", JSON.stringify({
-              ...JSON.parse(settings),
-              clock: `${props.app.id}.app.js`,
-            }))
-            EspruinoComms.resetDevice()
-          }
-
+          await setActive(props.app);
         } catch (error) {
           alert((error as Error).message);
           throw error;
@@ -78,6 +110,7 @@ const InstallControlButton = (props: ControlButtonProps) => {
       </ButtonIconContainer>
     </UiButton>
   )
+
 };
 const ConfigureControlButton = (props: ControlButtonProps) => {
   if (props.hasConfiguration) {
@@ -96,14 +129,19 @@ const ConfigureControlButton = (props: ControlButtonProps) => {
 };
 
 const UninstallControlButton = (props: ControlButtonProps) => {
+  const refresh = useEspruinoDeviceInfoStore(state => state.refresh);
+
   if (props.hasInstalled) {
     return (
       <UiButton
         fullWidth
         onClick={async () => {
           try {
-            await EspruinoComms.getDeviceInfo();
+            if (!props.device) {
+              await EspruinoComms.getDeviceInfo();
+            }
             await EspruinoComms.removeApp(props.app)
+            await refresh();
           } catch (error) {
             alert((error as Error).message);
             throw error;
@@ -124,22 +162,14 @@ const UninstallControlButton = (props: ControlButtonProps) => {
 
 
 export const AppStorageController = (props: AppDetailViewProps) => {
-  const [ hasInstalled, setHasInstalled ] = useState(false);
-  const [ hasUpdate, setHasUpdate ] = useState(false);
-  useEffect(() => {
-    if (EspruinoComms.isConnected()) {
-      EspruinoComms.getDeviceInfo()
-        .then(({ apps }) => {
-          const found = apps.find(app => app.id === props.app.id);
-
-          setHasInstalled(!!found);
-          setHasUpdate(!!(found && found.version === props.app.version));
-        })
-    }
-  }, [props.app]);
+  const device = useEspruinoDeviceInfoStore(state => state.device);
+  const matchingInstallApp = device && (device.apps.find(app => app.id === props.app.id));
+  const hasInstalled = !!matchingInstallApp;
+  const hasUpdate = hasInstalled && matchingInstallApp.version !== props.app.version;
 
   const controlButtonProps: ControlButtonProps = {
     ...props,
+    device,
     hasConfiguration: !!(props.app.custom ?? props.app.interface),
     hasInstalled,
     hasUpdate,
