@@ -6,9 +6,11 @@ import { ButtonIconContainer } from "../Buttons/ButtonIconContainer";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
 export interface ModalProps {
+  top?: ReactNode;
   children?: ReactNode;
+  bottom?: ReactNode;
   onDismiss?: () => void;
-};
+}
 
 export const Modal = (p: ModalProps) => {
   return (
@@ -58,6 +60,15 @@ export const Modal = (p: ModalProps) => {
             `}
           >
             {p.children}
+          </div>
+        }
+        bottom={
+          <div
+            css={css`
+              padding: 1rem;
+            `}
+          >
+            {p.bottom}
           </div>
         }
       />

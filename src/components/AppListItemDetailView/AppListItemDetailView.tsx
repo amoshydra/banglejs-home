@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { AppItem } from "../../api/banglejs/interface"
-import { Modal } from "./Modal";
+import { Modal } from "../Modal/Modal";
 import { AppDetailView } from "./AppDetailView";
 
 export interface AppListItemDetailViewProps {
@@ -36,7 +36,6 @@ export const AppListItemDetailView = (p: AppListItemDetailViewProps) => {
 
   const navigate = useNavigate()
 
-
   return (
     <Modal
       onDismiss={() => {
@@ -49,4 +48,3 @@ export const AppListItemDetailView = (p: AppListItemDetailViewProps) => {
     </Modal>
   )
 };
-
