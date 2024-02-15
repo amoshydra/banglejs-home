@@ -85,7 +85,6 @@ const useSortedApps = (sortedBy: BangleJsAppSortType) => {
   const sortKey = sortedBy === "modified" ? "modifiedDate" : "createdDate";
 
   const datesManifest = responseAppDates.data!;
-  console.log({datesManifest})
   return {
     isLoading,
     error,
