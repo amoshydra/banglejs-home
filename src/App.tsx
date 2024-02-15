@@ -10,6 +10,9 @@ import {
 import App from './views/Apps';
 import { SWRConfig } from 'swr';
 import { GlobalProgressToaster } from './services/GlobalProgress';
+import { EspruinoComms } from './services/Espruino/Comms';
+import { useEspruinoDeviceInfoStore } from './services/Espruino/stores/EspruinoDevice';
+import { useEffect } from 'react';
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -34,6 +37,13 @@ const router = createHashRouter(
 );
 
 function Entry() {
+  const sync = useEspruinoDeviceInfoStore(state => state.sync);
+  useEffect(() => {
+    EspruinoComms.watchConnectionChange(() => {
+      sync()
+    });
+  }, [sync])
+
   return (
     <SWRConfig value={{ provider: localStorageProvider }}>
       <RouterProvider router={router} />

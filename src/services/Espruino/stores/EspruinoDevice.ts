@@ -10,11 +10,12 @@ interface EspruinoDeviceInfoStoreState {
   connect: () => Promise<void>;
   refresh: () => Promise<void>;
   disconnect: () => Promise<void>;
+  sync: () => void;
 }
 
 export const useEspruinoDeviceInfoStore = create<EspruinoDeviceInfoStoreState>()(
   devtools(
-    (set) => {
+    (set, get) => {
       const connect = async () => {
         try {
           set(() => ({ connectionPending: true }));
@@ -38,6 +39,25 @@ export const useEspruinoDeviceInfoStore = create<EspruinoDeviceInfoStoreState>()
             device: null,
           }));
         },
+        sync: async () => {
+          const device = get().device;
+          if (EspruinoComms.isConnected()) {
+            if (device) {
+              return set(() => ({
+                device,
+              }))
+            }
+            return new Promise((resolve) => {
+              setTimeout(async () => {
+                await connect();
+                resolve();
+              })
+            });
+          }
+          return set(() => ({
+            device: null,
+          }))
+        }
       }
     },
   ),
