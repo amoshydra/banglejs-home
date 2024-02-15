@@ -29,10 +29,12 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.0",
     "swr": "^2.2.4",
-    "unified": "^11.0.4"
+    "unified": "^11.0.4",
+    "zustand": "^4.5.0"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.11.0",
+    "@redux-devtools/extension": "^3.3.0",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^6.21.0",

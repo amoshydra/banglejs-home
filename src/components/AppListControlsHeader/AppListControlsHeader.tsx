@@ -2,6 +2,7 @@ import { css } from "@emotion/react";
 import { BangleJsAppFilter, BangleJsAppFilterMap, BangleJsAppSortType } from "../../api/banglejs/methods";
 import { AppItem } from "../../api/banglejs/interface";
 import { useFilterControls } from "./FiltersControl/useFilterControls";
+import { DeviceControl } from "./DeviceControl/DeviceControl";
 
 export interface AppListControlValue {
   filters: BangleJsAppFilterMap;
@@ -28,7 +29,7 @@ export const AppListControlsHeader = (p: AppListControlsHeaderProps) => {
           width: 100%;
         `}
       >
-        <div>BangleJS Home</div>
+        <DeviceControl />
         <div>
           {filterControlsToggleButton}
         </div>
