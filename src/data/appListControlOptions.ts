@@ -9,7 +9,7 @@ export const sortControl = {
     options: [
       { label: "Favourited", value: "favourited" as const },
       { label: "Installed", value: "installed" as const },
-      { label: "Modified", value: "modified" as const },
+      { label: "Modified", value: "modified" as const, default: true },
       { label: "Created", value: "created" as const },
     ],
   },
