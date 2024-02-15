@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AppListControlValue } from "../components/AppListControls";
+import { AppListControlValue } from "../components/AppListControlsHeader/AppListControlsHeader";
 import { InputMethod, filterControlMap, sortControl } from "../data/appListControlOptions";
 import { AppItem } from "../api/banglejs/interface";
 import { BangleJsAppFilter, BangleJsAppSortType } from "../api/banglejs/methods";

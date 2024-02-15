@@ -1,6 +1,6 @@
 import { useApps } from '../../api/banglejs/methods';
 import { AppList } from '../../components/AppList';
-import { AppListControls } from '../../components/AppListControls';
+import { AppListControlsHeader } from '../../components/AppListControlsHeader/AppListControlsHeader';
 import { Layout } from '../../components/Layout';
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -21,7 +21,7 @@ function App() {
   return (
     <Layout
       top={
-        <AppListControls
+        <AppListControlsHeader
           filters={filters}
           sortedBy={sortedBy}
           onFilterChange={setFilter}
