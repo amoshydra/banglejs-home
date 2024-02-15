@@ -8,6 +8,26 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      const SETTINGS = {
+        pretokenise : true,
+        minify : false,  // disabled by default due to https://github.com/espruino/BangleApps/pull/355#issuecomment-620124162
+        settime : false, // Always update time when we connect
+        favourites : ["launch"],
+        language : "",
+        bleCompat: false, // 20 byte MTU BLE Compatibility mode
+        sendUsageStats: true,  // send usage stats to banglejs.com
+        alwaysAllowUpdate : false, //  Always show "reinstall app" buttonregardless of the version
+        autoReload: false //  Automatically reload watch after app App Loader actions (removes "Hold button" prompt)
+      };
+    </script>
+    <script src="https://banglejs.com/apps/core/js/utils.js"></script>
+    <script src="https://banglejs.com/apps/webtools/puck.js"></script>
+    <script src="https://banglejs.com/apps/webtools/heatshrink.js"></script>
+    <script src="https://banglejs.com/apps/core/lib/espruinotools.js"></script>
+    <script src="https://banglejs.com/apps/core/js/comms.js"></script>
+    <script src="https://banglejs.com/apps/core/js/appinfo.js"></script>
+    <script src="https://banglejs.com/apps/gadgetbridge.js"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

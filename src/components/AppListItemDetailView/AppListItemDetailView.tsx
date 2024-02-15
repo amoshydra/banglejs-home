@@ -4,7 +4,8 @@ import { Modal } from "./Modal";
 import { AppDetailView } from "./AppDetailView";
 
 export interface AppListItemDetailViewProps {
-  data: AppItem | null;
+  apps: AppItem[];
+  app: AppItem | null;
   isLoading: boolean;
   error: Error | null;
 }
@@ -24,13 +25,13 @@ export const AppListItemDetailView = (p: AppListItemDetailViewProps) => {
       )
     }
 
-    if (p.data === null) {
+    if (p.app === null) {
       return (
         <div>404 not found</div>
       )
     }
 
-    return <AppDetailView app={p.data} />
+    return <AppDetailView app={p.app} apps={p.apps} />
   })();
 
   const navigate = useNavigate()

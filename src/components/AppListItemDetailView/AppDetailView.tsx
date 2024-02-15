@@ -5,7 +5,7 @@ import { AppDetailViewProps } from "./interface";
 import { Readme } from "./Readme";
 import { AppStorageController } from "./AppStorageController";
 
-export const AppDetailView = ({ app, className }: AppDetailViewProps) => {
+export const AppDetailView = ({ app, apps, className }: AppDetailViewProps) => {
   return (
     <div
       className={className}
@@ -15,11 +15,11 @@ export const AppDetailView = ({ app, className }: AppDetailViewProps) => {
         flex-direction: column;
       `}
     >
-      <Heading app={app} />
-      <AppStorageController app={app} />
+      <Heading app={app} apps={apps} />
+      <AppStorageController app={app} apps={apps} />
       <p>{app.description}</p>
-      <Screenshost app={app} />
-      <Readme app={app} />
+      <Screenshost app={app} apps={apps} />
+      <Readme app={app} apps={apps} />
       <pre css={css`word-break: break-all; white-space: pre-wrap;`}>
         {JSON.stringify(app, null, 2)}
       </pre>

@@ -32,7 +32,8 @@ function App() {
         <>
           { appId && (
             <AppListItemDetailView
-              data={data.apps.find(app => app.id === appId) || null}
+              apps={data.apps}
+              app={data.apps.find(app => app.id === appId) || null}
               error={error}
               isLoading={isLoading}
             />

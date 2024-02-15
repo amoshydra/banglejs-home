@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import App from './views/Apps';
 import { SWRConfig } from 'swr';
+import { GlobalProgressToaster } from './services/GlobalProgress';
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -32,11 +33,11 @@ const router = createHashRouter(
   )
 );
 
-
 function Entry() {
   return (
     <SWRConfig value={{ provider: localStorageProvider }}>
       <RouterProvider router={router} />
+      <GlobalProgressToaster />
     </SWRConfig>
   )
 }
