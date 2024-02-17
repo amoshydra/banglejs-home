@@ -1,5 +1,5 @@
 import { AppItem, AppUsage } from "./interface";
-import * as BamgleJsUrls from "./urls";
+import * as BangleJsUrls from "./urls";
 
 
 interface ReqResponse<T> {
@@ -8,7 +8,7 @@ interface ReqResponse<T> {
 }
 
 const request = async<T>(path: string, cb: (res: Response) => T): Promise<ReqResponse<T>> => {
-  const url = new URL(path, BamgleJsUrls.BaseUrl);
+  const url = new URL(path, BangleJsUrls.BaseUrl);
   const res = await fetch(url);
 
   const jsonResponse = await cb(res)
@@ -30,19 +30,19 @@ const requestJson = async<T>(path: string): Promise<ReqResponse<T>> => {
 };
 
 export const getApps = async () => {
-  const { data: apps } = await requestJson<AppItem[]>(BamgleJsUrls.apps());
+  const { data: apps } = await requestJson<AppItem[]>(BangleJsUrls.apps());
   return {
     items: apps,
   }
 };
 
 export const getAppUsage = async () => {
-  const { data: apps } = await requestJson<AppUsage>(BamgleJsUrls.appUsage());
+  const { data: apps } = await requestJson<AppUsage>(BangleJsUrls.appUsage());
   return apps;
 };
 
 export const getAppDates = async () => {
-  const { data: usageCsv } = await requestText<string>(BamgleJsUrls.appDates());
+  const { data: usageCsv } = await requestText<string>(BangleJsUrls.appDates());
   return (
     Object.fromEntries(
       usageCsv
@@ -54,7 +54,7 @@ export const getAppDates = async () => {
 };
 
 export const getAppReadme = async (id: string, readmePath?: string) => {
-  const urlPath = BamgleJsUrls.appReadme(id, readmePath);
+  const urlPath = BangleJsUrls.appReadme(id, readmePath);
   if (!urlPath) return "";
 
   const { data: markdown } = await requestText<string>(urlPath);
