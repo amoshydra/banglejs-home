@@ -29,7 +29,7 @@ const originalUtils: (typeof Espruino)["Core"]["Utils"] = {
 
 const patchUrl = (methodName: keyof typeof originalUtils) => {
   Espruino.Core.Utils[methodName] = (href: string, ...others) => {
-    const newHref = href.replace(location.origin + import.meta.env.BASE_URL, "https://banglejs.com/")
+    const newHref = href.replace(location.origin + import.meta.env.BASE_URL, "https://banglejs.com/apps/")
     originalUtils[methodName](newHref, ...others);
   }
 }
