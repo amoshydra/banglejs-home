@@ -7,6 +7,9 @@ import { EspruinoComms } from "../../services/Espruino/Comms";
 import { useEspruinoDeviceInfoStore } from "../../services/Espruino/stores/EspruinoDevice";
 import { EspruinoDeviceInfo } from "../../services/Espruino/interface";
 import { AppItem } from "../../api/banglejs/interface";
+import { useState } from "react";
+import { ExternalAppInstallCustomModal } from "./ExternalAppInstallCustomModal";
+import * as Urls from "../../api/banglejs/urls";
 
 interface ControlButtonProps extends AppDetailViewProps {
   device: EspruinoDeviceInfo | null;
@@ -28,6 +31,10 @@ const InstallControlButton = (props: ControlButtonProps) => {
         </ButtonIconContainer>
       </UiButton>
     )
+  }
+
+  if (props.app.interface) {
+    return <InterfaceConfigureControlButton {...props} />
   }
 
   const setActive = async (app: AppItem) => {
@@ -110,22 +117,119 @@ const InstallControlButton = (props: ControlButtonProps) => {
       </ButtonIconContainer>
     </UiButton>
   )
-
 };
-const ConfigureControlButton = (props: ControlButtonProps) => {
-  if (props.hasConfiguration) {
-    return (
-      <UiButton fullWidth>
+
+const CustomConfigureControlButton = (props: ControlButtonProps) => {
+  const [uiVisible, setUiVisible] = useState(false);
+  const { device, connect } = useEspruinoDeviceInfoStore(state => ({ device: state.device, connect: state.connect }));
+
+  return (
+    <>
+      <UiButton
+        fullWidth
+        onClick={() => {
+          let promise = Promise.resolve();
+          if (props.app.customConnect && !device) {
+            promise = promise.then(() => connect())
+          }
+          promise.then(() => {
+            setUiVisible(v => !v);
+          });
+        }}
+      >
         <ButtonIconContainer
           leftIcon={faGear}
         >
           Configure
         </ButtonIconContainer>
       </UiButton>
-    );
-  }
+      {
+        <ExternalAppInstallCustomModal
+          src={Urls.appFile(props.app.id, props.app.custom)}
+          visible={uiVisible}
+          onDismiss={() => setUiVisible(false)}
+          app={props.app}
+          customInterfaceOptions={{
+            jsFile: "customize.js",
+            messageHandler: (event) => {
+              const msg = event.data;
+              if (msg.type == "app") {
+                const appFiles = msg.data as AppItem;
+                const app = JSON.parse(JSON.stringify(props.app)) as AppItem; // clone template
+                // copy extra keys from appFiles
+                Object
+                  .keys(appFiles)
+                  .forEach((k) => {
+                    const key = k as keyof AppItem;
+                    if (key !== "storage") {
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore
+                      app[key] = appFiles[key]
+                    }
+                  })
+                  ;
+                appFiles.storage.forEach(storageFile => {
+                  app.storage = app.storage.filter((s) => s.name != storageFile.name); // remove existing item
+                  app.storage.push(storageFile); // add new
+                });
+                console.log("Received custom app", app);
+                setUiVisible(false);
 
-  return null
+                if (props.device) {
+                  EspruinoComms.uploadApp(app, {
+                    device: {
+                      ...props.device,
+                      appsInstalled: props.device.apps,
+                    },
+                  });
+                }
+              }
+            }
+          }}
+        />
+      }
+    </>
+  );
+};
+
+const InterfaceConfigureControlButton = (props: ControlButtonProps) => {
+  const [uiVisible, setUiVisible] = useState(false);
+  const { device, connect } = useEspruinoDeviceInfoStore(state => ({ device: state.device, connect: state.connect }));
+
+  return (
+    <>
+      <UiButton
+        fullWidth
+        onClick={() => {
+          let promise = Promise.resolve();
+          if (props.app.customConnect && !device) {
+            promise = promise.then(() => connect())
+          }
+          promise.then(() => {
+            setUiVisible(v => !v);
+          });
+        }}
+      >
+        <ButtonIconContainer
+          leftIcon={faGear}
+        >
+          Configure
+        </ButtonIconContainer>
+      </UiButton>
+      {
+        <ExternalAppInstallCustomModal
+          src={Urls.appFile(props.app.id, props.app.interface)}
+          visible={uiVisible}
+          onDismiss={() => setUiVisible(false)}
+          app={props.app}
+          customInterfaceOptions={{
+            jsFile: "interface.js",
+            messageHandler: () => {},
+          }}
+        />
+      }
+    </>
+  );
 };
 
 const UninstallControlButton = (props: ControlButtonProps) => {
@@ -160,7 +264,6 @@ const UninstallControlButton = (props: ControlButtonProps) => {
   return null
 };
 
-
 export const AppStorageController = (props: AppDetailViewProps) => {
   const device = useEspruinoDeviceInfoStore(state => state.device);
   const matchingInstallApp = device && (device.apps.find(app => app.id === props.app.id));
@@ -182,9 +285,18 @@ export const AppStorageController = (props: AppDetailViewProps) => {
         gap: 1rem;
       `}
     >
-      <ConfigureControlButton {...controlButtonProps} />
-      <UninstallControlButton {...controlButtonProps} />
-      <InstallControlButton {...controlButtonProps} />
+      {
+        props.app.custom
+          ? (
+            <CustomConfigureControlButton {...controlButtonProps} />
+          )
+          : (
+            <>
+              <UninstallControlButton {...controlButtonProps} />
+              <InstallControlButton {...controlButtonProps} />
+            </>
+          )
+      }
     </div>
   )
 }
