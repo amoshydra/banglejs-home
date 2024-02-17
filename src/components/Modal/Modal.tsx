@@ -57,6 +57,7 @@ export const Modal = (p: ModalProps) => {
           <div
             css={css`
               padding: 1rem;
+              height: 100%;
             `}
           >
             {p.children}
