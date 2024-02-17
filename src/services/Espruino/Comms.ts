@@ -59,20 +59,19 @@ export const EspruinoComms: typeof Comms = {
   readFile: (...args) => {
     return Comms.readFile(...args)
   },
-  // readStorageFile: () => {
-  //   throw new Error("not implemented");
-  // },
+  readStorageFile: (...args) => {
+    return Comms.readStorageFile(...args)
+  },
   writeFile: (...args) => {
     return Comms.writeFile(...args)
   },
   // handlers: () => {
   //   throw new Error("not implemented");
   // },
-  // on: () => {
-  //   throw new Error("not implemented");
-  // },
+  on: (...args) => {
+    return Comms.on(...args)
+  },
 };
-
 
 declare const Comms: {
   uploadApp: (app: AppItem, options: {
@@ -137,5 +136,7 @@ declare const Comms: {
   disconnectDevice: () => void;
   watchConnectionChange: (cb: (connected: boolean) => void) => void;
   readFile: (filename: string) => Promise<string>;
+  readStorageFile: (filename: string) => Promise<string>;
   writeFile: (filename: string, data: string) => Promise<void>;
+  on: (id: "data", callback?: (data?: unknown) => void) => void;
 };
