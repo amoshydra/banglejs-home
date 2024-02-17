@@ -38,7 +38,14 @@ const router = createHashRouter(
 
 function Entry() {
   const sync = useEspruinoDeviceInfoStore(state => state.sync);
+  const connect = useEspruinoDeviceInfoStore(state => state.connect);
   useEffect(() => {
+    connect().then(() => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      window.__getInstalledApps_resolve();
+    });
+
     const timeoutId = setTimeout(() => {
       EspruinoComms.watchConnectionChange(() => {
         sync()
@@ -47,7 +54,7 @@ function Entry() {
     }, 1000);
 
     return () => clearTimeout(timeoutId);
-  }, [sync])
+  }, [sync, connect])
 
   return (
     <SWRConfig value={{ provider: localStorageProvider }}>

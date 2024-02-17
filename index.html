@@ -29,6 +29,10 @@
   <body>
     <div id="root">
       <div class="inital-loader">
+        <header>
+          🖥️ 📱 ⌚
+        </header>
+        <br />
         Loading application...
       </div>
     </div>
@@ -44,6 +48,10 @@
         alwaysAllowUpdate : false, //  Always show "reinstall app" buttonregardless of the version
         autoReload: false //  Automatically reload watch after app App Loader actions (removes "Hold button" prompt)
       };
+      window.__getInstalledApps_resolve = null;
+      window.getInstalledApps = () => new Promise((resolve) => {
+        window.__getInstalledApps_resolve = resolve;
+      });
     </script>
     <script src="https://banglejs.com/apps/core/js/utils.js"></script>
     <script src="https://banglejs.com/apps/webtools/puck.js"></script>
