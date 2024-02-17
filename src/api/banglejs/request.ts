@@ -54,7 +54,7 @@ export const getAppDates = async () => {
 };
 
 export const getAppReadme = async (id: string, readmePath?: string) => {
-  const urlPath = BangleJsUrls.appReadme(id, readmePath);
+  const urlPath = BangleJsUrls.appFile(id, readmePath);
   if (!urlPath) return "";
 
   const { data: markdown } = await requestText<string>(urlPath);

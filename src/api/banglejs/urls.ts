@@ -17,9 +17,9 @@ export const appImage = (name: string, icon?: string) => {
   return fromBaseUrl(`/apps/${name}/${icon}`);
 }
 
-export const appReadme = (id: string, readmePath?: string) => {
+export const appFile = (id: string, readmePath?: string) => {
   if (!readmePath) {
-    return PLACEHOLDER_IMAGE;
+    return null;
   }
   return fromBaseUrl(`/apps/${id}/${readmePath}`);
 }
