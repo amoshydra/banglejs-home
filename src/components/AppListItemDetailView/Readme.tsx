@@ -13,7 +13,12 @@ export const Readme = ({ app, className }: AppDetailViewProps) => {
       return <span>Loading...</span>;
     }
     if (!data || error) {
-      return <span>Error loading readme</span>;
+      return (
+        <div>
+          <p>Error loading readme</p>
+          { error && <pre>{error.message}{error.stack}</pre> }
+        </div>
+      );
     }
 
     return <MarkdownRenderer input={data} />;
