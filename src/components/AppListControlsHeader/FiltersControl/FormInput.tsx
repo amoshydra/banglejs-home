@@ -54,6 +54,40 @@ export const FormInput = <T,>({ name, label, inputMethod, value, onValueChange }
           </fieldset>
         )
       }
+      {
+        (
+          inputMethod.type === "text"
+        ) && (
+          <fieldset>
+            <label
+              htmlFor={`form-input-text-${name}`}
+              css={css`
+                display: inline-block;
+                margin-bottom: 1rem;
+              `}
+            >{label}</label>
+            {
+              <div>
+                <input
+                  id={`form-input-text-${name}`}
+                  css={css`
+                    font-size: 1rem;
+                    width: 100%;
+                    padding: 0.25rem;
+                    margin-bottom: 0.5rem;
+                  `}
+                  placeholder={inputMethod.placeholder}
+                  type={inputMethod.type}
+                  onChange={(e) => {
+                    onValueChange(inputMethod.filter(e.target.value));
+                  }}
+                  name={name}
+                />
+              </div>
+            }
+          </fieldset>
+        )
+      }
     </div>
   )
 };

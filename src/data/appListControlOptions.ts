@@ -16,6 +16,22 @@ export const sortControl = {
 };
 
 export const filterControlMap = {
+  __search: {
+    label: "Search",
+    inputMethod: {
+      type: "text" as const,
+      placeholder: "search name, id or description",
+      filter: (search: string) => (v: AppItem) => {
+        const value = [
+          v.id,
+          v.name,
+          v.shortName,
+          v.description,
+        ].join(String.fromCharCode(30) /* record separator */);
+        return value.toLowerCase().includes(search.toLowerCase());
+      },
+    }
+  },
   supports: {
     label: "Devices",
     inputMethod: {
@@ -66,5 +82,10 @@ export type InputMethod<T> = (
       value: T;
       default?: boolean;
     }[]
+  }
+  | {
+    type: "text";
+    placeholder?: string;
+    filter: (text: string) => T;
   }
 )

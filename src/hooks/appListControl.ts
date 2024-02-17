@@ -13,6 +13,10 @@ const extractDefaultValue = <T,>(inputMethod: InputMethod<T>) => {
     ).value
   }
 
+  if (inputMethod.type === "text") {
+    return inputMethod.filter("");
+  }
+
   throw new Error("no option available");
 }
 
