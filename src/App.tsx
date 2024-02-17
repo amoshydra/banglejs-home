@@ -39,9 +39,14 @@ const router = createHashRouter(
 function Entry() {
   const sync = useEspruinoDeviceInfoStore(state => state.sync);
   useEffect(() => {
-    EspruinoComms.watchConnectionChange(() => {
-      sync()
-    });
+    const timeoutId = setTimeout(() => {
+      EspruinoComms.watchConnectionChange(() => {
+        sync()
+      });
+      // Add some delay to avoid clashing with GadgetBridge's initial connection attempt
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
   }, [sync])
 
   return (
