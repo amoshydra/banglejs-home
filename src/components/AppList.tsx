@@ -13,10 +13,10 @@ export interface AppListProps extends HTMLAttributes<HTMLDivElement> {
 export const AppList = ({ onItemClick, isLoading, error, data: apps, ...props }: AppListProps) => {
 
   if (isLoading) {
-    return <div>Fetching store...</div>
+    return <MessageWrapper>Fetching store...</MessageWrapper>
   }
   if (error) {
-    return <div>Error fetching store, please try again later...</div>
+    return <MessageWrapper>Error fetching store, please try again later...</MessageWrapper>
   }
 
   return (
@@ -43,5 +43,16 @@ export const AppList = ({ onItemClick, isLoading, error, data: apps, ...props }:
       }
     </div>
   )
-
 };
+
+const MessageWrapper = (p: HTMLAttributes<HTMLDivElement>) => {
+  return (
+    <div
+      {...p}
+      css={css`
+        padding: 1rem;
+        text-align: center;
+      `}
+    />
+  )
+}
