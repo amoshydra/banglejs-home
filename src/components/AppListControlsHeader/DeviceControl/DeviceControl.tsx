@@ -72,16 +72,27 @@ export const DeviceControl = () => {
               setDeviceInforModalVisible(false);
             }}
             children={
-              <DeviceView device={device} />
+              <DeviceView
+                css={css`
+                  padding: 1rem;
+                `}
+                device={device}
+              />
             }
             bottom={
-              <UiButton
-                fullWidth
-                onClick={() => {
-                  setDeviceInforModalVisible(false);
-                  disconnect();
-                }}
-              >Disconnect device</UiButton>
+              <div
+                css={css`
+                  padding: 1rem;
+                `}
+              >
+                <UiButton
+                  fullWidth
+                  onClick={() => {
+                    setDeviceInforModalVisible(false);
+                    disconnect();
+                  }}
+                >Disconnect device</UiButton>
+              </div>
             }
           />
         )

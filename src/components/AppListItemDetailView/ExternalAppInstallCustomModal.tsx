@@ -141,28 +141,19 @@ export const ExternalAppInstallCustomModal = (p: ExternalAppInstallCustomModalPr
         <div>Failed to load inferface</div>
       )
       : (
-        <div
+        <CustomIframe
+          visible={p.visible}
           css={css`
+            width: 100%;
             height: 100%;
-            background: white;
-            padding: 1rem;
-            margin: -1rem;
+            border: none;
           `}
-        >
-          <CustomIframe
-            visible={p.visible}
-            css={css`
-              width: 100%;
-              height: 100%;
-              border: none;
-            `}
-            title="custom interface"
-            src={p.src}
-            app={p.app}
-            onDismiss={p.onDismiss}
-            customInterfaceOptions={p.customInterfaceOptions}
-          />
-        </div>
+          title="custom interface"
+          src={p.src}
+          app={p.app}
+          onDismiss={p.onDismiss}
+          customInterfaceOptions={p.customInterfaceOptions}
+        />
       )
   )
 
@@ -170,7 +161,15 @@ export const ExternalAppInstallCustomModal = (p: ExternalAppInstallCustomModalPr
     <Modal
       onDismiss={p.onDismiss}
     >
-      {modalContent}
+      <div
+        css={css`
+          height: 100%;
+          background: white;
+          padding: 1rem;
+        `}
+      >
+        {modalContent}
+      </div>
     </Modal>
   )
 };
