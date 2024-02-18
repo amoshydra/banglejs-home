@@ -43,11 +43,24 @@ const chain = unified()
         };
       },
       link: (state, node) => {
-        let url = new URL(node.url, location.origin);
+        const url = new URL(node.url, location.origin);
 
-        if (url.origin === "https://banglejs.com") {
-          if ((url.pathname === "/apps" || url.pathname === "/apps/") && url.searchParams.has('id')) {
-            url = new URL(`/#/apps/${url.searchParams.get('id')}`, location.origin + import.meta.env.BASE_URL);
+        // Matching url like https://www.banglejs.com/apps
+        if (
+          (url.origin === new URL(BangleJsUrls.RemoteBaseUrl).origin) &&
+          (url.pathname === "/apps" || url.pathname === "/apps/")
+        ) {
+          const appName = url.searchParams.get('id') || url.hash.substring(1);
+          if (appName) {
+            const newUrl = new URL(`${import.meta.env.BASE_URL}#/apps/${appName}`, location.origin);
+            return {
+              type: "element",
+              tagName: "a",
+              properties: {
+                href: newUrl.href,
+              },
+              children: state.all(node),
+            };
           }
         }
 
