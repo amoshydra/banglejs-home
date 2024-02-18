@@ -35,7 +35,7 @@ const Screenshost = ({ app, className }: AppDetailViewProps) => {
       css={css`
         display: flex;
         width: 100%;
-        overflow-x: scroll;
+        overflow-x: auto;
         gap: 0.5rem;
         > img {
           background-color: rgba(0, 0, 0, 0.9);
