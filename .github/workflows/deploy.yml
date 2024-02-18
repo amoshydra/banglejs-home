@@ -51,7 +51,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          BUILD_PUBLIC_PATH: /banglejs-home
+          BASE_URL: /banglejs-home
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact

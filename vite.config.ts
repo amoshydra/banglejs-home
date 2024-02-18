@@ -1,11 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-const BUILD_PUBLIC_PATH = process.env.BUILD_PUBLIC_PATH || '';
+const BASE_URL = process.env.BASE_URL || '';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: `${BUILD_PUBLIC_PATH}/`,
+  base: `${BASE_URL}/`,
   plugins: [react({
     jsxImportSource: "@emotion/react",
     babel: {

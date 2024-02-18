@@ -8,6 +8,7 @@ import {unified} from 'unified'
 import rehypeShiftHeading from 'rehype-shift-heading'
 import rehypeHighlight from 'rehype-highlight'
 import "highlight.js/styles/a11y-dark.min.css";
+import * as BangleJsUrls from '../../api/banglejs/urls'
 
 const chain = unified()
   .use(remarkParse)
@@ -17,7 +18,7 @@ const chain = unified()
       image: (state, node) => {
         const urlString = node.url;
         if (urlString.startsWith('/') || urlString.startsWith('http://') || urlString.startsWith('https://')) {
-          const url = new URL(node.url, "https://banglejs.com/");
+          const url = new URL(node.url, new URL(BangleJsUrls.RemoteBaseUrl).origin);
           return state.all({
             ...node,
             properties: {
@@ -28,7 +29,7 @@ const chain = unified()
         }
 
         const appId = location.hash.startsWith('#/apps/') ? location.hash.split('/')[2] : '_';
-        const url = new URL(node.url, `https://banglejs.com/apps/apps/${appId}/`);
+        const url = new URL(node.url, BangleJsUrls.fromBaseUrl(`apps/${appId}/`));
 
         return {
           type: "element",

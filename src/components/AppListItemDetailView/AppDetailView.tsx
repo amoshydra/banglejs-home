@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import * as Urls from "../../api/banglejs/urls";
+import * as BangleJsUrls from "../../api/banglejs/urls";
 import { ReactNode } from "react";
 import { AppDetailViewProps } from "./interface";
 import { Readme } from "./Readme";
@@ -46,7 +46,7 @@ const Screenshost = ({ app, className }: AppDetailViewProps) => {
     >
       {
         app.screenshots
-          .map(screenshot => Urls.appImage(app.id, screenshot.url))
+          .map(screenshot => BangleJsUrls.appImage(app.id, screenshot.url))
           .map(src => (
             <img
               key={src}
@@ -78,7 +78,7 @@ const Heading = ({ app, className }: AppDetailViewProps) => {
           flex-basis: 6rem;
           flex-shrink: 0;
         `}
-        src={Urls.appImage(app.id, app.icon)}
+        src={BangleJsUrls.appImage(app.id, app.icon)}
       />
       <div>
         <div

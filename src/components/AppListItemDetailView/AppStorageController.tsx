@@ -9,7 +9,7 @@ import { EspruinoDeviceInfo } from "../../services/Espruino/interface";
 import { AppItem } from "../../api/banglejs/interface";
 import { useState } from "react";
 import { ExternalAppInstallCustomModal } from "./ExternalAppInstallCustomModal";
-import * as Urls from "../../api/banglejs/urls";
+import * as BangleJsUrls from "../../api/banglejs/urls";
 
 interface ControlButtonProps extends AppDetailViewProps {
   device: EspruinoDeviceInfo | null;
@@ -145,7 +145,7 @@ const CustomConfigureControlButton = (props: ControlButtonProps) => {
       </UiButton>
       {
         <ExternalAppInstallCustomModal
-          src={Urls.appFile(props.app.id, props.app.custom)}
+          src={BangleJsUrls.appFile(props.app.id, props.app.custom)}
           visible={uiVisible}
           onDismiss={() => setUiVisible(false)}
           app={props.app}
@@ -218,7 +218,7 @@ const InterfaceConfigureControlButton = (props: ControlButtonProps) => {
       </UiButton>
       {
         <ExternalAppInstallCustomModal
-          src={Urls.appFile(props.app.id, props.app.interface)}
+          src={BangleJsUrls.appFile(props.app.id, props.app.interface)}
           visible={uiVisible}
           onDismiss={() => setUiVisible(false)}
           app={props.app}
