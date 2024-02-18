@@ -129,7 +129,7 @@ const CustomConfigureControlButton = (props: ControlButtonProps) => {
         fullWidth
         onClick={() => {
           let promise = Promise.resolve();
-          if (props.app.customConnect && !device) {
+          if (!device) {
             promise = promise.then(() => connect())
           }
           promise.then(() => {
@@ -202,7 +202,7 @@ const InterfaceConfigureControlButton = (props: ControlButtonProps) => {
         fullWidth
         onClick={() => {
           let promise = Promise.resolve();
-          if (props.app.customConnect && !device) {
+          if (!device) {
             promise = promise.then(() => connect())
           }
           promise.then(() => {
