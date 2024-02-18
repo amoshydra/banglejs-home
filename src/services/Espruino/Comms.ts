@@ -1,5 +1,5 @@
 import { AppItem } from "../../api/banglejs/interface";
-import { EspruinoDevice, EspruinoDeviceInfo } from "./interface";
+import { EspruinoDevice, EspruinoCommsGetDeviceInfoResponse } from "./interface";
 
 export const EspruinoComms = Comms;
 
@@ -49,7 +49,7 @@ declare const Comms: {
     noReset?: boolean;
   }) => Promise<void | unknown>;
 
-  getDeviceInfo: (noReset?: boolean) => Promise<EspruinoDeviceInfo>
+  getDeviceInfo: (noReset?: boolean) => Promise<EspruinoCommsGetDeviceInfoResponse>
 
   getAppInfo: UnknownFunction;
 

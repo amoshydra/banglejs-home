@@ -5,7 +5,7 @@ import { ButtonIconContainer } from "../Buttons/ButtonIconContainer";
 import { faGear, faDownload, faTrash, faLink } from "@fortawesome/free-solid-svg-icons";
 import { EspruinoComms } from "../../services/Espruino/Comms";
 import { useEspruinoDeviceInfoStore } from "../../services/Espruino/stores/EspruinoDevice";
-import { EspruinoDeviceInfo } from "../../services/Espruino/interface";
+import { EspruinoDevice } from "../../services/Espruino/interface";
 import { AppItem } from "../../api/banglejs/interface";
 import { useState } from "react";
 import { ExternalAppInstallCustomModal } from "./ExternalAppInstallCustomModal";
@@ -13,7 +13,7 @@ import * as BangleJsUrls from "../../api/banglejs/urls";
 import { ActivateAppButton } from "./AppStorageController/Buttons/ActivateAppButton";
 
 interface ControlButtonProps extends AppDetailViewProps {
-  device: EspruinoDeviceInfo | null;
+  device: EspruinoDevice;
   hasConfiguration: boolean;
   hasUpdate: boolean;
   hasInstalled: boolean;
@@ -76,16 +76,12 @@ const InstallControlButton = (props: ControlButtonProps) => {
       disabled={props.hasInstalled}
       onClick={async () => {
         try {
-          const deviceInfo = props.device || await EspruinoComms.getDeviceInfo();
-          const device = {
-            ...deviceInfo,
-            appsInstalled: deviceInfo.apps,
-          }
+          const device = props.device;
 
           if (props.app.dependencies) {
             Object.entries(props.app.dependencies)
               .map(async ([dependencyAppId]) => {
-                const hasInstalled = device.apps.find(app => app.id === dependencyAppId);
+                const hasInstalled = device.appsInstalled.find(app => app.id === dependencyAppId);
                 if (hasInstalled) return;
 
                 const dependencyApp = props.apps.find(app => app.id === dependencyAppId);
@@ -121,20 +117,14 @@ const InstallControlButton = (props: ControlButtonProps) => {
 
 const CustomConfigureControlButton = (props: ControlButtonProps) => {
   const [uiVisible, setUiVisible] = useState(false);
-  const { device, connect } = useEspruinoDeviceInfoStore(state => ({ device: state.device, connect: state.connect }));
+  const device = props.device;
 
   return (
     <>
       <UiButton
         fullWidth
         onClick={() => {
-          let promise = Promise.resolve();
-          if (!device) {
-            promise = promise.then(() => connect())
-          }
-          promise.then(() => {
-            setUiVisible(v => !v);
-          });
+          setUiVisible(v => !v);
         }}
       >
         <ButtonIconContainer
@@ -175,14 +165,9 @@ const CustomConfigureControlButton = (props: ControlButtonProps) => {
                 console.log("Received custom app", app);
                 setUiVisible(false);
 
-                if (props.device) {
-                  EspruinoComms.uploadApp(app, {
-                    device: {
-                      ...props.device,
-                      appsInstalled: props.device.apps,
-                    },
-                  });
-                }
+                EspruinoComms.uploadApp(app, {
+                  device,
+                });
               }
             }
           }}
@@ -264,17 +249,9 @@ const UninstallControlButton = (props: ControlButtonProps) => {
 
 export const AppStorageController = (props: AppDetailViewProps) => {
   const { device, connect, connectionPending } = useEspruinoDeviceInfoStore(({ device, connect, connectionPending }) => ({ device, connect, connectionPending }));
-  const matchingInstallApp = device && (device.apps.find(app => app.id === props.app.id));
+  const matchingInstallApp = device && (device.appsInstalled.find(app => app.id === props.app.id));
   const hasInstalled = !!matchingInstallApp;
   const hasUpdate = hasInstalled && matchingInstallApp.version !== props.app.version;
-
-  const controlButtonProps: ControlButtonProps = {
-    ...props,
-    device,
-    hasConfiguration: !!(props.app.custom ?? props.app.interface),
-    hasInstalled,
-    hasUpdate,
-  };
 
   return (
     <div
@@ -285,40 +262,52 @@ export const AppStorageController = (props: AppDetailViewProps) => {
       `}
     >
       {
-        !device
-          ? (
-            <>
-              <UiButton
-                fullWidth
-                onClick={() => {
-                  connect();
-                }}
-                disabled={connectionPending}
-              >
-                <ButtonIconContainer
-                  leftIcon={faLink}
+        (() => {
+          if (!device) {
+            return (
+              <>
+                <UiButton
+                  fullWidth
+                  onClick={() => {
+                    connect();
+                  }}
+                  disabled={connectionPending}
                 >
-                  {connectionPending ? "Connecting" : "Connect device"}
-                </ButtonIconContainer>
-              </UiButton>
+                  <ButtonIconContainer
+                    leftIcon={faLink}
+                  >
+                    {connectionPending ? "Connecting" : "Connect device"}
+                  </ButtonIconContainer>
+                </UiButton>
+              </>
+            )
+          }
+
+          const controlButtonProps: ControlButtonProps = {
+            ...props,
+            device,
+            hasConfiguration: !!(props.app.custom ?? props.app.interface),
+            hasInstalled,
+            hasUpdate,
+          };
+
+          if (props.app.custom) {
+            return (
+              <>
+                <UninstallControlButton {...controlButtonProps} />
+                <InstallControlButton {...controlButtonProps} />
+                <CustomConfigureControlButton {...controlButtonProps} />
+              </>
+            )
+          }
+
+          return (
+            <>
+              <UninstallControlButton {...controlButtonProps} />
+              <InstallControlButton {...controlButtonProps} />
             </>
           )
-          : (
-            props.app.custom
-              ? (
-                <>
-                  <UninstallControlButton {...controlButtonProps} />
-                  <InstallControlButton {...controlButtonProps} />
-                  <CustomConfigureControlButton {...controlButtonProps} />
-                </>
-              )
-              : (
-                <>
-                  <UninstallControlButton {...controlButtonProps} />
-                  <InstallControlButton {...controlButtonProps} />
-                </>
-              )
-          )
+        })()
       }
     </div>
   )

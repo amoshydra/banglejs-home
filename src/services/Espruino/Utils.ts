@@ -1,22 +1,11 @@
 import { AppItem } from "../../api/banglejs/interface";
+import { EspruinoDeviceInfo } from "./interface";
 
 export const EspruinoUtils = Utils;
 
-interface DeviceInfo {
-  id: string;
-  name: string;
-  features: string[];
-  g?: {
-    width: number;
-    height: number;
-    bpp: number;
-  };
-  img: string;
-}
-
 declare const Utils: {
   Const: Record<string, unknown>,
-  DEVICEINFO: DeviceInfo[],
+  DEVICEINFO: EspruinoDeviceInfo[],
   CODEPAGE_CONVERSIONS: Record<string, string | undefined>,
   convertStringToISOLatin: (originalStr: string) => string;
   escapeHtml: (text: string) => string,

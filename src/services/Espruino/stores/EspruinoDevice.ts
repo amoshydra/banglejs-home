@@ -1,11 +1,12 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import type {} from '@redux-devtools/extension' // required for devtools typing
-import { EspruinoDeviceInfo } from '../interface'
+import { EspruinoDevice } from '../interface'
 import { EspruinoComms } from '../Comms';
+import { EspruinoUtils } from '../Utils';
 
 interface EspruinoDeviceInfoStoreState {
-  device: EspruinoDeviceInfo | null;
+  device: EspruinoDevice | null;
   connectionPending: boolean;
   connect: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -19,9 +20,17 @@ export const useEspruinoDeviceInfoStore = create<EspruinoDeviceInfoStoreState>()
       const connect = async () => {
         try {
           set(() => ({ connectionPending: true }));
-          const device = await EspruinoComms.getDeviceInfo();
+          const deviceInfoResponse = await EspruinoComms.getDeviceInfo();
           set(() => ({
-            device,
+            device: {
+              appsInstalled: deviceInfoResponse.apps,
+              connected: true,
+              exptr: deviceInfoResponse.exptr,
+              id: deviceInfoResponse.id,
+              uid: deviceInfoResponse.uid,
+              version: deviceInfoResponse.version,
+              info: EspruinoUtils.DEVICEINFO.find(d => d.id == deviceInfoResponse.id),
+            },
             connectionPending: false,
           }));
         } catch (error) {

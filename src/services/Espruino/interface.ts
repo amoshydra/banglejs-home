@@ -1,4 +1,4 @@
-export interface EspruinoDeviceInfo {
+export interface EspruinoCommsGetDeviceInfoResponse {
   apps: EspruinoDeviceInstalledApp[];
   /**
    * @example 1708008913000
@@ -23,10 +23,40 @@ export interface EspruinoDeviceInfo {
 }
 
 export interface EspruinoDevice {
-  id: string;
-  appsInstalled: EspruinoDeviceInstalledApp[];
-  version: string;
+  uid: number;
   exptr: number;
+  /**
+   * The Espruino device ID of this device, eg. BANGLEJS
+   */
+  id: string,
+  /**
+   * The Espruino firmware version, eg 2v08
+   */
+  version: string,
+  /**
+   * An entry from DEVICEINFO with information about this device
+   */
+  info: undefined | EspruinoDeviceInfo,
+  /**
+   * are we connected via BLE right now?
+   */
+  connected: boolean,
+  /**
+   * list of app {id,version} of installed apps
+   */
+  appsInstalled: EspruinoDeviceInstalledApp[],
+}
+
+export interface EspruinoDeviceInfo {
+  id: string;
+  name: string;
+  features: string[];
+  g?: {
+    width: number;
+    height: number;
+    bpp: number;
+  };
+  img: string;
 }
 
 export interface EspruinoDeviceInstalledApp {

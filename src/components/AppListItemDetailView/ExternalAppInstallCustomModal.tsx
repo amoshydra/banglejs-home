@@ -48,10 +48,7 @@ const CustomIframe = (props: CustomIframe) => {
         iframe.contentWindow?.postMessage({
           type: "init",
           expectedInterface: props.customInterfaceOptions.jsFile,
-          data: !device ? undefined : {
-            ...device,
-            appsInstalled: device.apps,
-          }
+          data: device,
         }, "*");
     
         // Push any data received back through to IFRAME

@@ -1,7 +1,7 @@
-import { EspruinoDeviceInfo } from "../../../services/Espruino/interface";
+import { EspruinoDevice } from "../../../services/Espruino/interface";
 
 interface DeviceViewProps {
-  device: EspruinoDeviceInfo;
+  device: EspruinoDevice;
 }
 export const DeviceView = (props: DeviceViewProps) => {
   return (
