@@ -2,7 +2,7 @@ import { useApps } from '../../api/banglejs/methods';
 import { AppList } from '../../components/AppList';
 import { AppListControlsHeader } from '../../components/AppListControlsHeader/AppListControlsHeader';
 import { Layout } from '../../components/Layout';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { AppListItemDetailView } from '../../components/AppListItemDetailView/AppListItemDetailView';
 import { useAppListControl } from '../../hooks/appListControl';
 import { useEspruinoDeviceInfoStore } from '../../services/Espruino/stores/EspruinoDevice';
@@ -25,7 +25,6 @@ function App() {
   }
 
   const { appId } = useParams();
-  const navigate = useNavigate();
 
   return (
     <Layout
@@ -51,9 +50,6 @@ function App() {
             data={data.filtered}
             error={error}
             isLoading={isLoading}
-            onItemClick={(appId) => {
-              navigate(`/apps/${appId}`);
-            }}
           />
         </>
       }
