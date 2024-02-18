@@ -1,79 +1,17 @@
 import { AppItem } from "../../api/banglejs/interface";
 import { EspruinoDevice, EspruinoDeviceInfo } from "./interface";
 
-export const EspruinoComms: typeof Comms = {
-  // write: () => {
-  //   throw new Error("not implemented");
-  // },
-  // showMessage: () => {
-  //   throw new Error("not implemented");
-  // },
-  // showUploadFinished: () => {
-  //   throw new Error("not implemented");
-  // },
-  // getProgressCmd: () => {
-  //   throw new Error("not implemented");
-  // },
-  // reset: () => {
-  //   throw new Error("not implemented");
-  // },
-  // uploadCommandList: () => {
-  //   throw new Error("not implemented");
-  // },
-  uploadApp: (...args) => {
-    return Comms.uploadApp(...args)
-  },
-  getDeviceInfo: (...args) => {
-    return Comms.getDeviceInfo(...args)
-  },
-  // getAppInfo: () => {
-  //   throw new Error("not implemented");
-  // },
-  removeApp: (...args) => {
-    return Comms.removeApp(...args)
-  },
-  // removeAllApps: () => {
-  //   throw new Error("not implemented");
-  // },
-  // setTime: () => {
-  //   throw new Error("not implemented");
-  // },
-  resetDevice: (...args) => {
-    return Comms.resetDevice(...args)
-  },
-  isConnected: (...args) => {
-    return Comms.isConnected(...args)
-  },
-  disconnectDevice: (...args) => {
-    return Comms.disconnectDevice(...args)
-  },
-  watchConnectionChange: (...args) => {
-    return Comms.watchConnectionChange(...args)
-  },
-  // listFiles: () => {
-  //   throw new Error("not implemented");
-  // },
-  // readTextBlock: () => {
-  //   throw new Error("not implemented");
-  // },
-  readFile: (...args) => {
-    return Comms.readFile(...args)
-  },
-  readStorageFile: (...args) => {
-    return Comms.readStorageFile(...args)
-  },
-  writeFile: (...args) => {
-    return Comms.writeFile(...args)
-  },
-  // handlers: () => {
-  //   throw new Error("not implemented");
-  // },
-  on: (...args) => {
-    return Comms.on(...args)
-  },
-};
+export const EspruinoComms = Comms;
+
+type UnknownFunction = (...args: unknown[]) => unknown;
 
 declare const Comms: {
+  write: (data: string) => Promise<string>;
+  showMessage: UnknownFunction;
+  showUploadFinished: UnknownFunction;
+  getProgressCmd: UnknownFunction;
+  reset: UnknownFunction;
+
   uploadApp: (app: AppItem, options: {
     /**
      * object of translations, eg 'lang/de_DE.json'
@@ -110,6 +48,11 @@ declare const Comms: {
      */
     noReset?: boolean;
   }) => Promise<void | unknown>;
+
+  getDeviceInfo: (noReset?: boolean) => Promise<EspruinoDeviceInfo>
+
+  getAppInfo: UnknownFunction;
+
   removeApp: (app: AppItem, options?: {
     /**
      * if true, don't get data from watch
@@ -130,13 +73,23 @@ declare const Comms: {
      */
     noReset?: boolean;
   }) => Promise<void>
-  getDeviceInfo: (noReset?: boolean) => Promise<EspruinoDeviceInfo>
-  isConnected: () => boolean;
+
+  removeAllApps: UnknownFunction;
+  setTime: UnknownFunction;
+
   resetDevice: () => Promise<void>;
+  isConnected: () => boolean;
   disconnectDevice: () => void;
   watchConnectionChange: (cb: (connected: boolean) => void) => void;
+
+  listFiles: UnknownFunction;
+  readTextBlock: UnknownFunction;
+
   readFile: (filename: string) => Promise<string>;
   readStorageFile: (filename: string) => Promise<string>;
   writeFile: (filename: string, data: string) => Promise<void>;
+
+  handlers: UnknownFunction;
+
   on: (id: "data", callback?: (data?: unknown) => void) => void;
 };

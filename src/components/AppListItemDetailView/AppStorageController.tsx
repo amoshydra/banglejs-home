@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import { AppDetailViewProps } from "./interface";
 import { UiButton } from "../Buttons/UiButton";
 import { ButtonIconContainer } from "../Buttons/ButtonIconContainer";
-import { faGear, faDownload, faTrash, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faGear, faDownload, faTrash, faLink } from "@fortawesome/free-solid-svg-icons";
 import { EspruinoComms } from "../../services/Espruino/Comms";
 import { useEspruinoDeviceInfoStore } from "../../services/Espruino/stores/EspruinoDevice";
 import { EspruinoDeviceInfo } from "../../services/Espruino/interface";
@@ -10,6 +10,7 @@ import { AppItem } from "../../api/banglejs/interface";
 import { useState } from "react";
 import { ExternalAppInstallCustomModal } from "./ExternalAppInstallCustomModal";
 import * as BangleJsUrls from "../../api/banglejs/urls";
+import { ActivateAppButton } from "./AppStorageController/Buttons/ActivateAppButton";
 
 interface ControlButtonProps extends AppDetailViewProps {
   device: EspruinoDeviceInfo | null;
@@ -20,6 +21,10 @@ interface ControlButtonProps extends AppDetailViewProps {
 
 const InstallControlButton = (props: ControlButtonProps) => {
   const refresh = useEspruinoDeviceInfoStore(state => state.refresh);
+
+  if (!props.app.storage.length) {
+    return null;
+  }
 
   if (props.hasUpdate) {
     return (
@@ -44,31 +49,25 @@ const InstallControlButton = (props: ControlButtonProps) => {
   };
 
   if (props.hasInstalled) {
-    if (props.app.type && ["clock", "launcher"].includes(props.app.type)) {
-      return (
-        <UiButton
+    return (
+      <div
+        css={css`
+          display: flex;
+          gap: 0.25rem;
+          width: 100%;
+        `}
+      >
+        <ActivateAppButton
           fullWidth
-          onClick={async () => {
-            try {
-              await setActive(props.app);
-              await refresh();
-            } catch (error) {
-              alert((error as Error).message);
-              throw error;
-            }
-          }}
-        >
-          <ButtonIconContainer
-            leftIcon={faCheck}
-          >
-            Set active
-          </ButtonIconContainer>
-        </UiButton>
-      )
-    }
-    if (props.app.interface) {
-      return <InterfaceConfigureControlButton {...props} />
-    }
+          app={props.app}
+        />
+        {
+          props.app.interface && (
+            <InterfaceConfigureControlButton {...props} />
+          )
+        }
+      </div>
+    );
   }
 
   return (
@@ -213,9 +212,7 @@ const InterfaceConfigureControlButton = (props: ControlButtonProps) => {
       >
         <ButtonIconContainer
           leftIcon={faGear}
-        >
-          Configure
-        </ButtonIconContainer>
+        />
       </UiButton>
       {
         <ExternalAppInstallCustomModal
@@ -225,7 +222,7 @@ const InterfaceConfigureControlButton = (props: ControlButtonProps) => {
           app={props.app}
           customInterfaceOptions={{
             jsFile: "interface.js",
-            messageHandler: () => {},
+            messageHandler: () => { },
           }}
         />
       }
@@ -266,7 +263,7 @@ const UninstallControlButton = (props: ControlButtonProps) => {
 };
 
 export const AppStorageController = (props: AppDetailViewProps) => {
-  const device = useEspruinoDeviceInfoStore(state => state.device);
+  const { device, connect, connectionPending } = useEspruinoDeviceInfoStore(({ device, connect, connectionPending }) => ({ device, connect, connectionPending }));
   const matchingInstallApp = device && (device.apps.find(app => app.id === props.app.id));
   const hasInstalled = !!matchingInstallApp;
   const hasUpdate = hasInstalled && matchingInstallApp.version !== props.app.version;
@@ -278,6 +275,7 @@ export const AppStorageController = (props: AppDetailViewProps) => {
     hasInstalled,
     hasUpdate,
   };
+
   return (
     <div
       css={css`
@@ -287,15 +285,39 @@ export const AppStorageController = (props: AppDetailViewProps) => {
       `}
     >
       {
-        props.app.custom
+        !device
           ? (
-            <CustomConfigureControlButton {...controlButtonProps} />
+            <>
+              <UiButton
+                fullWidth
+                onClick={() => {
+                  connect();
+                }}
+                disabled={connectionPending}
+              >
+                <ButtonIconContainer
+                  leftIcon={faLink}
+                >
+                  {connectionPending ? "Connecting" : "Connect device"}
+                </ButtonIconContainer>
+              </UiButton>
+            </>
           )
           : (
-            <>
-              <UninstallControlButton {...controlButtonProps} />
-              <InstallControlButton {...controlButtonProps} />
-            </>
+            props.app.custom
+              ? (
+                <>
+                  <UninstallControlButton {...controlButtonProps} />
+                  <InstallControlButton {...controlButtonProps} />
+                  <CustomConfigureControlButton {...controlButtonProps} />
+                </>
+              )
+              : (
+                <>
+                  <UninstallControlButton {...controlButtonProps} />
+                  <InstallControlButton {...controlButtonProps} />
+                </>
+              )
           )
       }
     </div>
