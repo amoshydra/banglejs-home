@@ -25,7 +25,6 @@ export const AppList = ({ onItemClick, isLoading, error, data: apps, ...props }:
       css={css`
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
       `}
     >
       {

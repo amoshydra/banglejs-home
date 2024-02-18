@@ -12,9 +12,22 @@ export const AppListItem = ({ app, onClick }: AppListItemProps) => {
     <div
       onClick={onClick}
       css={css`
+        padding: 1.5rem;
         display: flex;
         align-items: flex-start;
         gap: 1rem;
+        transition: background-color 1s;
+
+        @media (hover: hover) {
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+          }
+        }
+        &:active {
+          background-color: rgba(0, 0, 0, 0.175);
+          transition: background-color 0.1s;
+        }
       `}
     >
       <img

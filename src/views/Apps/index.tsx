@@ -2,7 +2,6 @@ import { useApps } from '../../api/banglejs/methods';
 import { AppList } from '../../components/AppList';
 import { AppListControlsHeader } from '../../components/AppListControlsHeader/AppListControlsHeader';
 import { Layout } from '../../components/Layout';
-import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AppListItemDetailView } from '../../components/AppListItemDetailView/AppListItemDetailView';
 import { useAppListControl } from '../../hooks/appListControl';
@@ -49,9 +48,6 @@ function App() {
             />
           )}
           <AppList
-            css={css`
-              padding: 1.5rem;
-            `}
             data={data.filtered}
             error={error}
             isLoading={isLoading}
