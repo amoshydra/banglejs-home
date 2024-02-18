@@ -4,6 +4,7 @@ import { ButtonIconContainer } from "../../../Buttons/ButtonIconContainer";
 import { UiButton, UiButtonProps } from "../../../Buttons/UiButton";
 import { EspruinoComms } from "../../../../services/Espruino/Comms";
 import { AppItem } from "../../../../api/banglejs/interface";
+import { EspruinoDevice } from "../../../../services/Espruino/interface";
 
 interface ActivateAppButtonProps extends UiButtonProps{
   app: AppItem;
@@ -21,23 +22,32 @@ export const ActivateAppButton = ({ app, ...props }: ActivateAppButtonProps) => 
     )
   }
 
-  const launchableApp = getLaunchable(app);
-  if (!launchableApp) {
-    return null;
-  }
-
   return (
     <LaunchAppButton
       {...props}
       app={app}
-      launchableAppName={launchableApp.name}
     />
   )
 }
 
-const getLaunchable = (app: AppItem) => app.storage.find(storage => storage.name === `${app.id}.app.js`);
+const getLaunchable = (app: AppItem, device: EspruinoDevice | null) => {
+  if (!device) return null;
 
-const LaunchAppButton = ({ app, launchableAppName, ...props }: ActivateAppButtonProps & { launchableAppName: string }) => {
+  const installedApp = device.appsInstalled.find(installedApp => installedApp.id === app.id);
+  if (!installedApp) return null;
+
+  const files = installedApp.files.split(',');
+  return files.find(file => file === `${app.id}.app.js`);
+};
+
+const LaunchAppButton = ({ app, ...props }: ActivateAppButtonProps) => {
+  const device = useEspruinoDeviceInfoStore(state => state.device);
+  const launchableAppName = getLaunchable(app, device);
+  
+  if (!launchableAppName) {
+    return null;
+  }
+
   return (
     <UiButton
       {...props}
