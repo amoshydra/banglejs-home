@@ -40,7 +40,6 @@ const InstallControlButton = (props: ControlButtonProps) => {
         [app.type]: `${app.id}.app.js`,
       }))
       EspruinoComms.resetDevice()
-      await refresh();
     }
   };
 
@@ -52,6 +51,7 @@ const InstallControlButton = (props: ControlButtonProps) => {
           onClick={async () => {
             try {
               await setActive(props.app);
+              await refresh();
             } catch (error) {
               alert((error as Error).message);
               throw error;
@@ -104,6 +104,7 @@ const InstallControlButton = (props: ControlButtonProps) => {
 
           await EspruinoComms.uploadApp(props.app, { device });
           await setActive(props.app);
+          await refresh();
         } catch (error) {
           alert((error as Error).message);
           throw error;
