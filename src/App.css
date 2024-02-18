@@ -5,7 +5,6 @@ body {
   margin: 0 auto;
 }
 #root {
-  max-width: 1280px;
   min-width: 0;
   margin-left: auto;
   margin-right: auto;
