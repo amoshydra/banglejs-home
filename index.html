@@ -48,12 +48,6 @@
         alwaysAllowUpdate : false, //  Always show "reinstall app" buttonregardless of the version
         autoReload: false //  Automatically reload watch after app App Loader actions (removes "Hold button" prompt)
       };
-      if (typeof Android !== "undefined") {
-        window.__getInstalledApps_resolve = null;
-        window.getInstalledApps = () => new Promise((resolve) => {
-          window.__getInstalledApps_resolve = resolve;
-        });
-      }
     </script>
     <script src="/externals/espruino/BangleApps/core/js/utils.js"></script>
     <script src="/externals/espruino/BangleApps/webtools/puck.js"></script>
@@ -61,7 +55,21 @@
     <script src="/externals/espruino/BangleApps/core/lib/espruinotools.js"></script>
     <script src="/externals/espruino/BangleApps/core/js/comms.js"></script>
     <script src="/externals/espruino/BangleApps/core/js/appinfo.js"></script>
-    <script src="/externals/espruino/BangleApps/gadgetbridge.js"></script>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      (async () => {
+        if (typeof Android === "undefined") return;
+
+        window.showToast = alert
+        const res = await fetch("/externals/espruino/BangleApps/android.html");
+        const htmlString = await res.text()
+        const dp = new DOMParser();
+        const doc = dp.parseFromString(htmlString, "text/html");
+        const scriptContent = Array.from(doc.getElementsByTagName("script")).find(s => s.textContent.includes("Running in Android, overwrite Puck library")).textContent;
+        const script = document.createElement("script");
+        script.textContent = scriptContent;
+        document.body.appendChild(script);
+      })();
+    </script>
   </body>
 </html>

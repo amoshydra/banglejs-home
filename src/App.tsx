@@ -13,6 +13,7 @@ import { GlobalProgressToaster } from './services/GlobalProgress';
 import { EspruinoComms } from './services/Espruino/Comms';
 import { useEspruinoDeviceInfoStore } from './services/Espruino/stores/EspruinoDevice';
 import { useEffect } from 'react';
+import { useGadgetBridgeConnector } from './services/GadgetbridgeConnector';
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -37,23 +38,22 @@ const router = createHashRouter(
 );
 
 function Entry() {
-  const sync = useEspruinoDeviceInfoStore(state => state.sync);
-  const connect = useEspruinoDeviceInfoStore(state => state.connect);
-  useEffect(() => {
-    if ('__getInstalledApps_resolve' in window && typeof window.__getInstalledApps_resolve === "function") {
-      const resolve = window.__getInstalledApps_resolve;
-      connect().then(() => resolve());
-    }
+  const { device, sync, connect } = useEspruinoDeviceInfoStore(({ device, sync, connect }) => ({ device, sync, connect }));
 
-    const timeoutId = setTimeout(() => {
-      EspruinoComms.watchConnectionChange(() => {
+  useGadgetBridgeConnector({
+    onConnected: connect
+  });
+
+  useEffect(() => {
+    const timeoutId = setInterval(() => {
+      const isConnected = !!device;
+      if (EspruinoComms.isConnected() !== isConnected) {
         sync()
-      });
-      // Add some delay to avoid clashing with GadgetBridge's initial connection attempt
+      }
     }, 1000);
 
     return () => clearTimeout(timeoutId);
-  }, [sync, connect])
+  }, [sync, connect, device])
 
   return (
     <SWRConfig value={{ provider: localStorageProvider }}>
