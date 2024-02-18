@@ -32,11 +32,6 @@ const InstallControlButton = (props: ControlButtonProps) => {
       </UiButton>
     )
   }
-
-  if (props.app.interface) {
-    return <InterfaceConfigureControlButton {...props} />
-  }
-
   const setActive = async (app: AppItem) => {
     if (app.type === "clock" || app.type === "launcher") {
       const settings = await EspruinoComms.readFile("setting.json");
@@ -49,26 +44,31 @@ const InstallControlButton = (props: ControlButtonProps) => {
     }
   };
 
-  if (props.hasInstalled && props.app.type && ["clock", "launcher"].includes(props.app.type)) {
-    return (
-      <UiButton
-        fullWidth
-        onClick={async () => {
-          try {
-            await setActive(props.app);
-          } catch (error) {
-            alert((error as Error).message);
-            throw error;
-          }
-        }}
-      >
-        <ButtonIconContainer
-          leftIcon={faCheck}
+  if (props.hasInstalled) {
+    if (props.app.type && ["clock", "launcher"].includes(props.app.type)) {
+      return (
+        <UiButton
+          fullWidth
+          onClick={async () => {
+            try {
+              await setActive(props.app);
+            } catch (error) {
+              alert((error as Error).message);
+              throw error;
+            }
+          }}
         >
-          Set active
-        </ButtonIconContainer>
-      </UiButton>
-    )
+          <ButtonIconContainer
+            leftIcon={faCheck}
+          >
+            Set active
+          </ButtonIconContainer>
+        </UiButton>
+      )
+    }
+    if (props.app.interface) {
+      return <InterfaceConfigureControlButton {...props} />
+    }
   }
 
   return (
