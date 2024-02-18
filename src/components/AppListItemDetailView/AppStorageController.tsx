@@ -130,7 +130,7 @@ const CustomConfigureControlButton = (props: ControlButtonProps) => {
         <ButtonIconContainer
           leftIcon={faGear}
         >
-          Configure
+          Setup
         </ButtonIconContainer>
       </UiButton>
       {
@@ -197,7 +197,9 @@ const InterfaceConfigureControlButton = (props: ControlButtonProps) => {
       >
         <ButtonIconContainer
           leftIcon={faGear}
-        />
+        >
+          Configure
+        </ButtonIconContainer>
       </UiButton>
       {
         <ExternalAppInstallCustomModal
