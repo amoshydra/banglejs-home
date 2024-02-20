@@ -1,4 +1,4 @@
-import { useApps } from '../../api/banglejs/methods';
+import { useApps, useSortedApps, filterApps } from '../../api/banglejs/methods';
 import { AppList } from '../../components/AppList';
 import { AppListControlsHeader } from '../../components/AppListControlsHeader/AppListControlsHeader';
 import { Layout } from '../../components/Layout';
@@ -11,10 +11,9 @@ import { filterControlMap } from '../../data/appListControlOptions';
 function App() {
   const device = useEspruinoDeviceInfoStore(state => state.device);
   const { filters, setFilter, sortedBy, setSortedBy } = useAppListControl();
-  const { data, error, isLoading } = useApps({
-    sortedBy,
-    filters,
-  });
+  const { data: apps } = useApps();
+  const { data: sortedApps, error, isLoading } = useSortedApps(sortedBy);
+  const filteredApps = filterApps(sortedApps, filters);
 
   if (device && device.id) {
     const foundOption = filterControlMap.supports.inputMethod.options.find(option => option.label.replace(/ /g, '').toUpperCase() === device.id)?.value;
@@ -40,14 +39,14 @@ function App() {
         <>
           { appId && (
             <AppListItemDetailView
-              apps={data.apps}
-              app={data.apps.find(app => app.id === appId) || null}
+              apps={apps}
+              appId={appId}
               error={error}
               isLoading={isLoading}
             />
           )}
           <AppList
-            data={data.filtered}
+            data={filteredApps}
             error={error}
             isLoading={isLoading}
           />

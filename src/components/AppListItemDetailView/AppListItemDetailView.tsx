@@ -6,12 +6,13 @@ import { css } from "@emotion/react";
 
 export interface AppListItemDetailViewProps {
   apps: AppItem[];
-  app: AppItem | null;
+  appId: string;
   isLoading: boolean;
   error: Error | null;
 }
 
 export const AppListItemDetailView = (p: AppListItemDetailViewProps) => {
+  const app = p.apps.find(app => app.id === p.appId) || null;
 
   const children = (() => {
     if (p.isLoading) {
@@ -26,13 +27,13 @@ export const AppListItemDetailView = (p: AppListItemDetailViewProps) => {
       )
     }
 
-    if (p.app === null) {
+    if (app === null) {
       return (
         <div>404 not found</div>
       )
     }
 
-    return <AppDetailView app={p.app} apps={p.apps} />
+    return <AppDetailView app={app} apps={p.apps} />
   })();
 
   const navigate = useNavigate()

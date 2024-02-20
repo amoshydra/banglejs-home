@@ -19,76 +19,80 @@ export interface UseAppsOptions {
   filters: BangleJsAppFilterMap,
 }
 
-export const useApps = (options: UseAppsOptions) => {
-  const appFetchInfo = useSortedApps(options.sortedBy);
-
-  const allApps = appFetchInfo.data || []
-  
-  const filters = Object.values(options.filters);
-  const filteredApps = allApps.filter((app) =>
-    filters.every((filter) => filter(app))
-  );
-
-  return {
-    ...appFetchInfo,
-    data: {
-      filtered: filteredApps,
-      apps: allApps,
-    },
-  };
-};
-
 export const useAppReadme = (id: string, readmePath?: string) => {
   return useSWRImmutable(`${id}/readme`, () => getAppReadme(id, readmePath));
 }
 
-const useSortedApps = (sortedBy: BangleJsAppSortType) => {
-  const responseApps = useSWRImmutable("/apps", getApps);
+interface FetchState {
+  data: unknown;
+  isLoading: boolean;
+  error: Error | null;
+}
+
+const mergeFetchStates = (...states: FetchState[]) => {
+  return {
+    isLoading: states.some(s => s!.isLoading),
+    error: states.find(s => s!.error)?.error || null,
+    hasData: states.every(s => s.data),
+  };
+};
+
+export const useApps = () => {
+  const { data, error, isLoading } = useSWRImmutable("/apps", getApps);
+  return {
+    data: data?.items.slice() || [],
+    error,
+    isLoading,
+  };
+};
+
+export const useSortedApps = (sortedBy: BangleJsAppSortType) => {
   const responseAppUsage = useSWRImmutable("/usage", getAppUsage);
   const responseAppDates = useSWRImmutable("/dates", getAppDates);
+  const responseApps = useApps();
 
-  const isLoading = (
-    responseApps.isLoading ||
-    responseAppUsage.isLoading ||
-    responseAppDates.isLoading
-  );
-  const error = (
-    responseApps.error ||
-    responseAppUsage.error ||
-    responseAppDates.error ||
-    null
-  );
-
-  if (isLoading || error) {
-    return {
-      isLoading,
-      error,
-      data: null,
-    };
-  }
-
-  const apps = responseApps.data!.items.slice();
+  const {
+    error,
+    isLoading,
+  } = mergeFetchStates(responseApps, responseAppUsage, responseAppDates);
 
   if (sortedBy === "favourited" || sortedBy === "installed") {
+    const usageData = responseAppUsage.data;
+    if (!usageData) {
+      return {
+        error,
+        isLoading,
+        data: responseApps.data,
+      };
+    }
+
     const sortKey = sortedBy === "favourited" ? "fav" : "app";
 
-    const favouriteManifest = responseAppUsage.data![sortKey];
+    const favouriteManifest = usageData[sortKey];
     return {
       isLoading,
       error,
-      data: apps.sort((appA, appB) => {
+      data: responseApps.data.sort((appA, appB) => {
         return favouriteManifest[appB.id] - favouriteManifest[appA.id]
       }),
     }
   }
 
+  const datesManifest = responseAppDates.data;
+  if (!datesManifest) {
+    return {
+      error,
+      isLoading,
+      data: responseApps.data,
+    };
+  }
+
   const sortKey = sortedBy === "modified" ? "modifiedDate" : "createdDate";
 
-  const datesManifest = responseAppDates.data!;
   return {
     isLoading,
     error,
-    data: apps.sort((appA, appB) => {
+    data: responseApps.data.sort((appA, appB) => {
       return (
         Date.parse(datesManifest[appB.id][sortKey]) -
         Date.parse(datesManifest[appA.id][sortKey])
@@ -96,3 +100,10 @@ const useSortedApps = (sortedBy: BangleJsAppSortType) => {
     }),
   };
 }
+
+export const filterApps = (apps: AppItem[], filtersMap: BangleJsAppFilterMap) => {
+  const filters = Object.values(filtersMap);
+  return apps.filter((app) =>
+    filters.every((filter) => filter(app))
+  );
+};
