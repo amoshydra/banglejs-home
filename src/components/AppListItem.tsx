@@ -2,15 +2,20 @@ import { css } from "@emotion/react";
 import { AppItem } from "../api/banglejs/interface";
 import * as BangleJsUrls from "../api/banglejs/urls";
 
-interface AppListItemProps {
-  app: AppItem;
-  onClick?: () => void;
+export interface AppListItemProps {
+  app: {
+    id: AppItem["id"],
+    name?: AppItem["name"],
+    icon?: AppItem["icon"],
+    description?: AppItem["description"],
+    type?: AppItem["type"],
+    tags?: AppItem["tags"],
+  };
 }
 
-export const AppListItem = ({ app, onClick }: AppListItemProps) => {
+export const AppListItem = ({ app }: AppListItemProps) => {
   return (
     <div
-      onClick={onClick}
       css={css`
         padding: 1.5rem;
         display: flex;
@@ -71,7 +76,7 @@ export const AppListItem = ({ app, onClick }: AppListItemProps) => {
   )
 };
 
-const AppTags = ({ type = "", tags = "", className }: { type?: string, tags: string, className?: string }) => {
+const AppTags = ({ type = "", tags = "", className }: { type?: string, tags?: string, className?: string }) => {
   const tagItems = (
     Array.from(
       new Set(

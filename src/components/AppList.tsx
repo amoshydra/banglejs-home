@@ -1,10 +1,9 @@
 import { css } from "@emotion/react";
 import { AppItem } from "../api/banglejs/interface";
-import { AppListItem } from "./AppListItem";
 import { CSSProperties, HTMLAttributes, useMemo } from "react";
-import { Link } from "react-router-dom";
 import { ListRowRenderer, List } from 'react-virtualized/dist/es/List';
 import useResizeObserver from "use-resize-observer";
+import { AppListItemLink } from "./AppListItemLink";
 
 export interface AppListProps {
   isLoading: boolean;
@@ -64,22 +63,13 @@ const AppListListView = ({ apps, dimension, ...props }: AppListWaProps) => {
     const app = apps[p.index];
   
     return (
-      <Link
+      <AppListItemLink
         key={p.key}
-        style={p.style}
-        to={`/apps/${app.id}`}
-        css={css`
-          color: inherit;
-          &:hover {
-            color: inherit;
-          }
-        `}
-      >
-        <AppListItem
-          key={app.id}
-          app={app}
-        />
-      </Link>
+        link={{
+          style: p.style,
+        }}
+        app={app}
+      />
     );
   }, [apps])
 
