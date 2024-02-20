@@ -77,20 +77,5 @@
     <script src="/externals/espruino/BangleApps/core/js/comms.js"></script>
     <script src="/externals/espruino/BangleApps/core/js/appinfo.js"></script>
     <script type="module" src="/src/main.tsx"></script>
-    <script>
-      (async () => {
-        if (typeof Android === "undefined") return;
-
-        window.showToast = alert
-        const res = await fetch("/externals/espruino/BangleApps/android.html");
-        const htmlString = await res.text()
-        const dp = new DOMParser();
-        const doc = dp.parseFromString(htmlString, "text/html");
-        const scriptContent = Array.from(doc.getElementsByTagName("script")).find(s => s.textContent.includes("Running in Android, overwrite Puck library")).textContent;
-        const script = document.createElement("script");
-        script.textContent = scriptContent;
-        document.body.appendChild(script);
-      })();
-    </script>
   </body>
 </html>
