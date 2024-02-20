@@ -1,9 +1,10 @@
 import { css } from "@emotion/react";
 import { AppItem } from "../api/banglejs/interface";
 import { AppListItem } from "./AppListItem";
-import { CSSProperties, HTMLAttributes,  useLayoutEffect, useRef, useState } from "react";
+import { CSSProperties, HTMLAttributes, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ListRowRenderer, List } from 'react-virtualized/dist/es/List';
+import useResizeObserver from "use-resize-observer";
 
 export interface AppListProps {
   isLoading: boolean;
@@ -13,49 +14,53 @@ export interface AppListProps {
   style?: CSSProperties;
 }
 
-const getDimension = (element: HTMLElement) => {
-  return {
-    height: element.parentElement!.clientHeight,
-    width: element.parentElement!.clientWidth,
-  }
-};
+interface Dimension {
+  width: number;
+  height: number;
+}
 
 export const AppList = ({ isLoading, error, data: apps, ...props }: AppListProps) => {
-  const [ dimension, setDimension ] = useState({ width: 0, height: 0 });
-  const ref = useRef<HTMLDivElement>(null);
+  const { ref, width = 0, height = 0 } = useResizeObserver<HTMLDivElement>();
 
-  useLayoutEffect(() => {
-    const element = ref.current;
-    const resizeHandler = () => {
-      if (element) {
-        setDimension(getDimension(element))
+  return (
+    <div
+      ref={ref}
+      css={css`
+        height: 100%;
+      `}
+    >
+      {
+        (() => {
+          if (isLoading) {
+            return <MessageWrapper>Fetching store...</MessageWrapper>
+          }
+          if (error) {
+            return <MessageWrapper>Error fetching store, please try again later...</MessageWrapper>
+          }
+
+          return (
+            <AppListListView
+              {...props}
+              apps={apps}
+              dimension={{
+                height,
+                width,
+              }}
+            />
+          )
+        })()
       }
-    };
+    </div>
+  )
+};
 
-    const observer = new ResizeObserver(() => {
-      resizeHandler()
-    });
-    resizeHandler();
+interface AppListWaProps {
+  apps: AppItem[];
+  dimension: Dimension;
+}
 
-    if (element) observer.observe(element);
-
-    return () => {
-      if (element) {
-        observer.unobserve(element);
-        observer.disconnect();
-      }
-    }
-  }, [])
-
-
-  if (isLoading) {
-    return <MessageWrapper>Fetching store...</MessageWrapper>
-  }
-  if (error) {
-    return <MessageWrapper>Error fetching store, please try again later...</MessageWrapper>
-  }
-
-  const RowRenderer: ListRowRenderer = (p) => {
+const AppListListView = ({ apps, dimension, ...props }: AppListWaProps) => {
+  const RowRenderer = useMemo((): ListRowRenderer => (p) => {
     const app = apps[p.index];
   
     return (
@@ -76,25 +81,18 @@ export const AppList = ({ isLoading, error, data: apps, ...props }: AppListProps
         />
       </Link>
     );
-  }
+  }, [apps])
 
   return (
-    <div
-      ref={ref}
-      css={css`
-        height: 100%;
-      `}
-    >
-      <List
-        {...props}
-        aria-readonly={undefined}
-        width={dimension.width}
-        height={dimension.height}
-        rowCount={apps.length}
-        rowHeight={126}
-        rowRenderer={RowRenderer}
-      />
-    </div>
+    <List
+      {...props}
+      aria-readonly={undefined}
+      width={dimension.width}
+      height={dimension.height}
+      rowCount={apps.length}
+      rowHeight={126}
+      rowRenderer={RowRenderer}
+    />
   )
 };
 
