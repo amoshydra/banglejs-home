@@ -3,6 +3,7 @@ import { AppItem } from "../../api/banglejs/interface"
 import { Modal } from "../Modal/Modal";
 import { AppDetailView } from "./AppDetailView";
 import { css } from "@emotion/react";
+import { AppDetailViewDeviceView } from "./AppDetailViewDeviceView";
 
 export interface AppListItemDetailViewProps {
   apps: AppItem[];
@@ -51,6 +52,10 @@ export const AppListItemDetailView = (p: AppListItemDetailViewProps) => {
         `}
       >
         {children}
+        <AppDetailViewDeviceView
+          appId={p.appId}
+          apps={p.apps}
+        />
       </div>
     </Modal>
   )

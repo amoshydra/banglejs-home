@@ -1,4 +1,5 @@
 import { EspruinoDevice } from "../../../services/Espruino/interface";
+import { DeviceViewInstalledApps } from "./DeviceViewInstalledApps/DeviceViewInstalledApps";
 
 interface DeviceViewProps {
   device: EspruinoDevice;
@@ -10,11 +11,9 @@ export const DeviceView = (props: DeviceViewProps) => {
       <h2>Device Info</h2>
 
       <br />
-      <div>
-        {props.device.appsInstalled.map((app) => (
-          <div key={app.id}>{ app.id }</div>
-        ))}
-      </div>
+      <DeviceViewInstalledApps
+        installedApps={props.device.appsInstalled}
+      />
 
       <br />
 
