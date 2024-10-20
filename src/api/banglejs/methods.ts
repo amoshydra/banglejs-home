@@ -94,8 +94,8 @@ export const useSortedApps = (sortedBy: BangleJsAppSortType) => {
     error,
     data: responseApps.data.sort((appA, appB) => {
       return (
-        Date.parse(datesManifest[appB.id][sortKey]) -
-        Date.parse(datesManifest[appA.id][sortKey])
+        Date.parse(datesManifest[appB.id]?.[sortKey]) -
+        Date.parse(datesManifest[appA.id]?.[sortKey])
       );
     }),
   };
