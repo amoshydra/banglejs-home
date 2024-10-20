@@ -4,6 +4,8 @@ import { ReactNode } from "react";
 import { AppDetailViewProps } from "./interface";
 import { Readme } from "./Readme";
 import { AppStorageController } from "./AppStorageController";
+import useSWRImmutable from "swr/immutable";
+import { getAppDates } from "../../api/banglejs/request";
 
 export const AppDetailView = ({ app, apps, className }: AppDetailViewProps) => {
   return (
@@ -19,10 +21,11 @@ export const AppDetailView = ({ app, apps, className }: AppDetailViewProps) => {
       <AppStorageController app={app} apps={apps} />
       <p>{app.description}</p>
       <Screenshost app={app} apps={apps} />
-      <Readme app={app} apps={apps} />
+      <Readme app={app} apps={apps}/>
       <pre css={css`word-break: break-all; white-space: pre-wrap;`}>
         {JSON.stringify(app, null, 2)}
       </pre>
+      <DatesSection app={app} apps={apps} />
     </div>
   );
 };
@@ -114,3 +117,16 @@ const Tag = (({ children }: { children: ReactNode }) => {
     >{children}</span>
   )
 })
+
+const DatesSection = ({ app, className }: AppDetailViewProps) => {
+  const responseAppDates = useSWRImmutable("/dates", getAppDates);
+  const dates = responseAppDates.data;
+  const { createdDate, modifiedDate } = dates?.[app.id] || { createdDate: "1900", modifiedDate: "1900" }
+  return (
+    <div className={className}>
+      <small>modified: {new Date(modifiedDate).toString()}</small>
+        <br />
+      <small>created: {new Date(createdDate).toString()}</small>
+    </div>
+  )
+}
