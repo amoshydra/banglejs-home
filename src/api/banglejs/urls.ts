@@ -8,7 +8,7 @@ export const fromRemoteBaseUrl = (path: string) => `${RemoteBaseUrl}${path}`;
 export const apps = () => fromBaseUrl('apps.json');
 
 export const appUsage = () => fromRemoteBaseUrl('appusage.json');
-export const appDates = () => fromBaseUrl('appdates.csv');
+export const appDates = () => fromRemoteBaseUrl('appdates.csv');
 
 const PLACEHOLDER_IMAGE = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
 
