@@ -43,6 +43,11 @@ jobs:
       - name: AppJson
         run: |
           cd public/externals/espruino/BangleApps
+          git fetch origin master:master --depth 1
+          git checkout master
+          echo "Current commit is:"
+          git rev-parse HEAD
+          echo ""
           cp $(which node) ./bin/nodejs
           export PATH="$PATH:$PWD/bin"
           ./bin/create_apps_json.sh apps.json
