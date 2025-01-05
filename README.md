@@ -9,7 +9,7 @@ https://amoshydra.github.io/banglejs-home/#/apps
 
 An unofficial alternate home for your [BangleJS Smartwatch](https://banglejs.com/).
 
-BanglsJS Home uses some of the code from https://banglejs.com/apps for communicating with your BangleJS Smartwatch. 
+BangleJS Home uses some of the code from https://banglejs.com/apps for communicating with your BangleJS Smartwatch. 
 
 ## Features:
 - An alternative UI for listing apps
