@@ -1,30 +1,46 @@
-# React + TypeScript + Vite
+# ⌚ BangleJS Home
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+> **⚠ Caution**
+> - Please note the implementation is not official, please use at your own risk.
+> - Avoid updating critical part of the watch with this app. Avoid updating firmware via this app.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+https://amoshydra.github.io/banglejs-home/#/apps
 
-## Expanding the ESLint configuration
+An unofficial alternate home for your BangleJS Smartwatch.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+This uses some the code from https://banglejs.com/apps/ for communicating with your BangleJS Smartwatch. 
 
-- Configure the top-level `parserOptions` property like this:
+## Features:
+- An alternative UI for listing apps
+- App view to provide screenshots and readme
+- App view allow launching of installed watch app
+- App view allow setting of clock watchface
+- My device view to list installed app
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+
+
+
+| App list |  Filters |  App view |  My device |
+| :-- |  :-- |  :-- |  :-- |
+| ![banglejs-home-001](https://github.com/user-attachments/assets/b830d922-e888-4f6a-a37d-c050b39fb909) | ![banglejs-home-002](https://github.com/user-attachments/assets/8273da4d-64c2-494e-9902-1990d574088e) | ![banglejs-home-003](https://github.com/user-attachments/assets/7110a6f6-1266-4855-ac6e-760ef37bb3b1) | ![banglejs-home-004](https://github.com/user-attachments/assets/349af379-10de-4c94-8557-cf146b594650)
+
+
+## Usage in Bangle.js Gadgetbridge
+
+This can be used as the default app loader inside your Gadgetbridge.
+
+1. ⚙️ Device Specific Settings → Developer options → 🔗 App loader URL
+2. ```
+    https://amoshydra.github.io/banglejs-home/
+    ```
+    <img alt="setting app loader url inside banglejs gadgetbridge" src="https://github.com/user-attachments/assets/1fdefd6f-3291-46ae-9eec-6b076bd4a07b" width="300">
+
+
+## Development
+
+```bash
+yarn
+yarn dev
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
