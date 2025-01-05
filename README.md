@@ -7,7 +7,7 @@
 
 https://amoshydra.github.io/banglejs-home/#/apps
 
-An unofficial alternate home for your BangleJS Smartwatch.
+An unofficial alternate home for your [BangleJS Smartwatch](https://banglejs.com/).
 
 BanglsJS Home uses some of the code from https://banglejs.com/apps for communicating with your BangleJS Smartwatch. 
 
@@ -39,7 +39,7 @@ This can be used as the default app loader inside your Gadgetbridge.
 
 ## Development
 
-This project uses the original espruino/BangleApps repository as submodules, Run `git clone` with `--recurse-submodule` flag to include the necessary submodules.
+This project uses the original [espruino/BangleApps](https://github.com/espruino/BangleApps) repository as submodules, Run `git clone` with `--recurse-submodule` flag to include the necessary submodules.
 
 ```bash
 git clone --recurse-submodules git@github.com:amoshydra/banglejs-home.git
