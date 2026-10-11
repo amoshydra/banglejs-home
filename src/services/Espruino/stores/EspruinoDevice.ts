@@ -33,7 +33,7 @@ export const useEspruinoDeviceInfoStore = create<EspruinoDeviceInfoStoreState>()
             },
             connectionPending: false,
           }));
-        } catch (error) {
+        } catch {
           set(() => ({ connectionPending: false }));
         }
       };

@@ -107,6 +107,7 @@ const useRemark = (doc: string) => {
 
   const requestSequence = useRef(1);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- surface loading state while the async markdown pipeline runs
     setIsLoading(true);
     const seq = requestSequence.current;
     chain.process(doc)
