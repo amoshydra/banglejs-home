@@ -161,6 +161,10 @@ const CustomConfigureControlButton = (props: ControlButtonProps) => {
 
                 EspruinoComms.uploadApp(app, {
                   device,
+                  // Custom pages (eg the firmware updater) can ask the loader to
+                  // skip its "hold to reload" finish step; upstream forwards
+                  // msg.options.noFinish the same way (see handleCustomApp).
+                  noFinish: msg.options?.noFinish,
                 });
               }
             }
