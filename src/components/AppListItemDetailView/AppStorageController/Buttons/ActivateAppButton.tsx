@@ -5,7 +5,7 @@ import { UiButton, UiButtonProps } from "../../../Buttons/UiButton";
 import { EspruinoComms } from "../../../../services/Espruino/Comms";
 import { AppItem } from "../../../../api/banglejs/interface";
 import { EspruinoDevice } from "../../../../services/Espruino/interface";
-import { EspruinoUtils } from "../../../../services/Espruino/Utils";
+import { setActiveApp } from "../../../../services/Espruino/setActiveApp";
 
 interface ActivateAppButtonProps extends UiButtonProps{
   app: AppItem;
@@ -74,7 +74,7 @@ const SetActiveButton = ({ app, ...props }: SetActiveButtonProps) => {
 
   const clickHandler = async () => {
     try {
-      await setActive(app);
+      await setActiveApp(app);
       await refresh();
     } catch (error) {
       alert((error as Error).message);
@@ -98,11 +98,4 @@ const SetActiveButton = ({ app, ...props }: SetActiveButtonProps) => {
 
 
 
-const setActive = async (app: AppItem & { type: "clock" | "launcher" }) => {
-  const settings = await EspruinoComms.readFile("setting.json");
-  await EspruinoComms.writeFile("setting.json", JSON.stringify({
-    ...EspruinoUtils.parseRJSON(settings),
-    [app.type]: `${app.id}.app.js`,
-  }))
-  EspruinoComms.resetDevice()
-};
+

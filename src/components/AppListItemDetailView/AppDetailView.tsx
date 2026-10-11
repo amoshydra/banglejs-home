@@ -22,9 +22,6 @@ export const AppDetailView = ({ app, apps, className }: AppDetailViewProps) => {
       <p>{app.description}</p>
       <Screenshost app={app} apps={apps} />
       <Readme app={app} apps={apps}/>
-      <pre css={css`word-break: break-all; white-space: pre-wrap;`}>
-        {JSON.stringify(app, null, 2)}
-      </pre>
       <DatesSection app={app} apps={apps} />
     </div>
   );
