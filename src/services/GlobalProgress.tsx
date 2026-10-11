@@ -1,7 +1,7 @@
-import toast, { Toaster } from 'react-hot-toast';
-import { createPortal } from 'react-dom';
+import toast, { Toaster, useToaster } from 'react-hot-toast';
+import { css } from '@emotion/react';
+import { useEffect, useRef } from 'react';
 import { EspruinoProgress } from "../services/Espruino/Progress";
-import { useTopDialog } from './DialogStack';
 
 const augmentedWindow = window as unknown as { Progress: typeof EspruinoProgress };
 const GLOBAL_PROGRESS_ID = "GLOBAL_PROGRESS_ID";
@@ -41,8 +41,50 @@ augmentedWindow.Progress = Object.defineProperties(Object.create(null), {
   },
 });
 
+// A <dialog> opened with showModal() lives in the browser's top layer, which
+// paints above everything in normal flow regardless of z-index. Rendering the
+// toaster into document.body therefore hides it behind an open dialog.
+//
+// Give the toaster its own top-layer entry via the Popover API: promote it
+// whenever a toast is present (so it lands above any dialog open at the time)
+// and release it when there are none. Pointer events pass through so the
+// underlying dialog stays interactive.
+const cssToastLayer = css`
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+  pointer-events: none;
+`;
+
 export const GlobalProgressToaster = () => {
-  const topDialog = useTopDialog();
-  // Render into the topmost open <dialog> so toasts stay above its top layer.
-  return createPortal(<Toaster />, topDialog ?? document.body);
+  const layerRef = useRef<HTMLDivElement>(null);
+  const { toasts } = useToaster();
+
+  useEffect(() => {
+    const layer = layerRef.current;
+    if (!layer || typeof layer.showPopover !== "function") return;
+
+    const shouldOpen = toasts.length > 0;
+    const isOpen = layer.matches(":popover-open");
+
+    if (shouldOpen && !isOpen) {
+      layer.showPopover();
+    } else if (!shouldOpen && isOpen) {
+      layer.hidePopover();
+    }
+  }, [toasts]);
+
+  return (
+    <div ref={layerRef} popover="manual" css={cssToastLayer}>
+      <Toaster />
+    </div>
+  );
 };
