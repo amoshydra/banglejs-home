@@ -12,6 +12,7 @@ import { SWRConfig } from 'swr';
 import { GlobalProgressToaster } from './services/GlobalProgress';
 import { EspruinoComms } from './services/Espruino/Comms';
 import { useEspruinoDeviceInfoStore } from './services/Espruino/stores/EspruinoDevice';
+import { useShallow } from 'zustand/react/shallow';
 import { useEffect } from 'react';
 import { useGadgetBridgeConnector } from './services/GadgetbridgeConnector';
 import { localStorageProvider } from './services/CacheStorage';
@@ -39,7 +40,7 @@ const router = createHashRouter(
 );
 
 function Entry() {
-  const { device, sync, connect } = useEspruinoDeviceInfoStore(({ device, sync, connect }) => ({ device, sync, connect }));
+  const { device, sync, connect } = useEspruinoDeviceInfoStore(useShallow(({ device, sync, connect }) => ({ device, sync, connect })));
 
   useGadgetBridgeConnector({
     onConnected: connect

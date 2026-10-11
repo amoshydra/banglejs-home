@@ -5,6 +5,7 @@ import { ButtonIconContainer } from "../Buttons/ButtonIconContainer";
 import { faGear, faDownload, faTrash, faLink } from "@fortawesome/free-solid-svg-icons";
 import { EspruinoComms } from "../../services/Espruino/Comms";
 import { useEspruinoDeviceInfoStore } from "../../services/Espruino/stores/EspruinoDevice";
+import { useShallow } from "zustand/react/shallow";
 import { EspruinoDevice } from "../../services/Espruino/interface";
 import { AppItem } from "../../api/banglejs/interface";
 import { useState } from "react";
@@ -179,7 +180,7 @@ const CustomConfigureControlButton = (props: ControlButtonProps) => {
 
 const InterfaceConfigureControlButton = (props: ControlButtonProps) => {
   const [uiVisible, setUiVisible] = useState(false);
-  const { device, connect } = useEspruinoDeviceInfoStore(state => ({ device: state.device, connect: state.connect }));
+  const { device, connect } = useEspruinoDeviceInfoStore(useShallow(state => ({ device: state.device, connect: state.connect })));
 
   return (
     <>
@@ -250,7 +251,7 @@ const UninstallControlButton = (props: ControlButtonProps) => {
 };
 
 export const AppStorageController = (props: AppDetailViewProps) => {
-  const { device, connect, connectionPending } = useEspruinoDeviceInfoStore(({ device, connect, connectionPending }) => ({ device, connect, connectionPending }));
+  const { device, connect, connectionPending } = useEspruinoDeviceInfoStore(useShallow(({ device, connect, connectionPending }) => ({ device, connect, connectionPending })));
   const matchingInstallApp = device && (device.appsInstalled.find(app => app.id === props.app.id));
   const hasInstalled = !!matchingInstallApp;
   const hasUpdate = hasInstalled && matchingInstallApp.version !== props.app.version;
