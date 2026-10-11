@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import { AppItem } from "../api/banglejs/interface";
 import { CSSProperties, HTMLAttributes, useMemo } from "react";
 import { ListRowRenderer, List } from 'react-virtualized/dist/es/List';
-import useResizeObserver from "use-resize-observer";
+import { useResizeObserver } from "use-resize-observer";
 import { AppListItemLink } from "./AppListItemLink";
 
 export interface AppListProps {
