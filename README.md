@@ -39,7 +39,10 @@ This can be used as the default app loader inside your Gadgetbridge.
 
 ## Development
 
-This project uses the original [espruino/BangleApps](https://github.com/espruino/BangleApps) repository as submodules, Run `git clone` with `--recurse-submodule` flag to include the necessary submodules.
+Requires Node 20+ (see `.nvmrc`). This project uses the original
+[espruino/BangleApps](https://github.com/espruino/BangleApps) repository as a
+submodule; clone with `--recurse-submodules` (or run
+`git submodule update --init --recursive`) so the loader code is present.
 
 ```bash
 git clone --recurse-submodules git@github.com:amoshydra/banglejs-home.git
@@ -47,3 +50,50 @@ cd banglejs-home
 yarn
 yarn dev
 ```
+
+## BangleApps integration
+
+This project does not reimplement the loader. It grafts a React UI onto the
+official loader code vendored under `public/externals/espruino/BangleApps`
+(an [espruino/BangleApps](https://github.com/espruino/BangleApps) submodule).
+
+- `index.html` loads a **subset** of upstream's scripts as classic scripts
+  (`core/js/{utils,comms,appinfo}.js`, `core/lib/espruinotools.js`,
+  `webtools/{puck,heatshrink}.js`) and binds to their globals (`Comms`,
+  `Utils`, `Const`, `AppInfo`, `Puck`, `Espruino`, `httpGet`).
+- Upstream's own app layer (`core/js/index.js`, `core/js/ui.js`, `loader.js`,
+  `backup.js`, …) is **not** loaded. This UI reimplements it and provides shims
+  for `Progress`, `showToast`, `getInstalledApps` and `SETTINGS`
+  (see `src/services/Espruino/`).
+- `src/services/Espruino/patches/` adapts upstream code to run inside a SPA
+  (URL rewriting, Gadgetbridge connectivity).
+- The typed wrappers in `src/services/Espruino/*.ts` are **hand-written**
+  (not generated from upstream), so they can drift.
+- `src/services/Espruino/integration.contract.test.ts` pins the upstream API
+  surface this app depends on and fails in CI if a submodule bump changes it.
+
+Because this depends on upstream internals, the project is pinned to a specific
+BangleApps commit, and **a bump must be tested before merging**.
+
+## Updating the BangleApps submodule
+
+The build uses the **pinned** submodule commit (not upstream `master`), so
+production only changes when the pin changes. A scheduled workflow
+(`.github/workflows/bump-submodule.yml`) opens this as a PR weekly; you can
+also do it by hand:
+
+```bash
+git submodule update --init --recursive
+cd public/externals/espruino/BangleApps
+git fetch origin master
+git checkout origin/master
+git submodule update --init --recursive   # update nested core/webtools
+cd -
+git add public/externals/espruino/BangleApps
+git commit -m "chore: bump BangleApps submodule"
+```
+
+CI (`.github/workflows/ci.yml`) then runs `yarn lint`, `yarn test` — including
+the integration contract test — and `yarn build`. Because a bump can change
+behaviour that only shows on hardware, do a quick device test
+(connect → install → activate → remove) before merging.
