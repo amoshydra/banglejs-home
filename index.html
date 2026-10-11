@@ -64,10 +64,13 @@
         settime : false, // Always update time when we connect
         favourites : ["launch"],
         language : "",
+        appsfavouritedThisSession : [],
         bleCompat: false, // 20 byte MTU BLE Compatibility mode
         sendUsageStats: true,  // send usage stats to banglejs.com
-        alwaysAllowUpdate : false, //  Always show "reinstall app" buttonregardless of the version
-        autoReload: false //  Automatically reload watch after app App Loader actions (removes "Hold button" prompt)
+        alwaysAllowUpdate : false, //  Always show "reinstall app" button regardless of the version
+        alwaysAllowEmulator : false, //  Always show "emulator" button regardless of whether it's supported by the app
+        autoReload: false, //  Automatically reload watch after app App Loader actions (removes "Hold button" prompt)
+        noPackets: false  // Enable File Upload Compatibility mode (disables binary packet upload)
       };
     </script>
     <script src="/externals/espruino/BangleApps/core/js/utils.js"></script>

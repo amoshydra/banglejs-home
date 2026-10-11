@@ -42,9 +42,9 @@ jobs:
       - name: AppJson
         run: |
           cd public/externals/espruino/BangleApps
-          git fetch origin master:master --depth 1
-          git checkout master
-          echo "Current commit is:"
+          # Build against the pinned submodule commit so what ships is what
+          # was reviewed/tested. Bump the pin deliberately (see README).
+          echo "Building against pinned BangleApps commit:"
           git rev-parse HEAD
           echo ""
           cp $(which node) ./bin/nodejs
