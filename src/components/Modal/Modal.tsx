@@ -4,6 +4,7 @@ import { Layout } from "../Layout";
 import { UiButton } from "../Buttons/UiButton";
 import { ButtonIconContainer } from "../Buttons/ButtonIconContainer";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { pushDialog, removeDialog } from "../../services/DialogStack";
 
 export interface ModalProps {
   top?: ReactNode;
@@ -16,9 +17,13 @@ export const Modal = (p: ModalProps) => {
   const ref = useRef<HTMLDialogElement>(null);
   useLayoutEffect(() => {
     const modal = ref.current;
-    modal?.showModal();
+    if (!modal) return;
+
+    modal.showModal();
+    pushDialog(modal);
     return () => {
-      modal?.close();
+      removeDialog(modal);
+      modal.close();
     }
   }, []);
 
