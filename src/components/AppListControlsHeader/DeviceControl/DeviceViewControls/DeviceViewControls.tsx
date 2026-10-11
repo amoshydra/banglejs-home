@@ -3,10 +3,6 @@ import { UiButton } from "../../../Buttons/UiButton";
 import { css } from "@emotion/react";
 import { EspruinoComms } from "../../../../services/Espruino/Comms";
 
-export interface DeviceViewControlsProps {
-
-}
-
 const defaultCommand = `Bluetooth.println(
   JSON.stringify(
    JSON.parse(

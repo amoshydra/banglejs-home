@@ -32,7 +32,7 @@ export const read = (reader: () => string | null): CacheMapInfo => {
         map: new Map(caches),
       };
     }
-  } catch (e) {
+  } catch {
     // using empty cache map
   }
 

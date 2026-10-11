@@ -16,7 +16,7 @@ const isAndroid = typeof Android !== "undefined"
 
 export const useGadgetBridgeConnector = (
   !isAndroid
-    ? () => { isAndroid }
+    ? () => ({ isAndroid })
     : (
       (options: UseGadgetBridgeConnectorOptions) => {
         useEffect(() => {
