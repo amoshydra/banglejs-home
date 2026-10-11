@@ -3,11 +3,17 @@ import { AppList } from '../../components/AppList';
 import { AppListControlsHeader } from '../../components/AppListControlsHeader/AppListControlsHeader';
 import { Layout } from '../../components/Layout';
 import { useParams } from 'react-router-dom';
-import { AppListItemDetailView } from '../../components/AppListItemDetailView/AppListItemDetailView';
 import { useAppListControl } from '../../hooks/appListControl';
 import { useEspruinoDeviceInfoStore } from '../../services/Espruino/stores/EspruinoDevice';
 import { filterControlMap } from '../../data/appListControlOptions';
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
+
+// The detail view pulls in the markdown pipeline (remark/rehype/highlight),
+// so load it on demand instead of in the initial bundle.
+const AppListItemDetailView = lazy(() =>
+  import('../../components/AppListItemDetailView/AppListItemDetailView')
+    .then(m => ({ default: m.AppListItemDetailView }))
+);
 
 function App() {
   const device = useEspruinoDeviceInfoStore(state => state.device);
@@ -43,12 +49,14 @@ function App() {
       children={
         <>
           { appId && (
-            <AppListItemDetailView
-              apps={apps}
-              appId={appId}
-              error={error}
-              isLoading={isLoading}
-            />
+            <Suspense fallback={null}>
+              <AppListItemDetailView
+                apps={apps}
+                appId={appId}
+                error={error}
+                isLoading={isLoading}
+              />
+            </Suspense>
           )}
           <AppList
             data={filteredApps}
