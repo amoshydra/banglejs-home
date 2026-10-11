@@ -4,7 +4,7 @@ import { ButtonIconContainer } from "../../Buttons/ButtonIconContainer";
 import { UiButton } from "../../Buttons/UiButton";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
-import { filterControlMap, sortControl } from "../../../data/appListControlOptions";
+import { filterControlMap, sortControl, deviceFilterControl } from "../../../data/appListControlOptions";
 import { AppItem } from "../../../api/banglejs/interface";
 import { FormInput } from "./FormInput";
 
@@ -20,6 +20,8 @@ export const useFilterControls = (p: AppListControlsHeaderProps) => {
     onFilterChange,
     sortedBy,
     onSortedByChange,
+    deviceFilter,
+    onDeviceFilterChange,
   } = p;
   const { visible, button: filterControlsToggleButton } = useToggleButton();
 
@@ -35,6 +37,12 @@ export const useFilterControls = (p: AppListControlsHeaderProps) => {
           `}
         >
           <div>
+            <FormInput
+              {...deviceFilterControl}
+              name={deviceFilterControl.key}
+              value={deviceFilter}
+              onValueChange={(value) => onDeviceFilterChange(value)}
+            />
             <FormInput
               {...sortControl}
               name={sortControl.key}
