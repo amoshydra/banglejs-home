@@ -31,7 +31,7 @@
       if (new URLSearchParams(location.search).get("debug") === "true") {
         const errorOverlay = document.createElement("div");
         errorOverlay.style="position: fixed; top: 0; left: 0; width: 100%; z-index: 100; background: rgba(0, 0, 0, 0.5);";
-        docoment.body.appendChild(errorOverlay);
+        document.body.appendChild(errorOverlay);
   
         window.onerror = function myErrorHandler(message, url, lineNumber) {
           const child = document.createElement("pre");

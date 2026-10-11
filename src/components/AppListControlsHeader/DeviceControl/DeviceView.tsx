@@ -17,11 +17,6 @@ export const DeviceView = (props: DeviceViewProps) => {
       <DeviceViewInstalledApps
         installedApps={props.device.appsInstalled}
       />
-
-      <pre>
-        {JSON.stringify(props.device, null, 2)}
-      </pre>
-
     </div>
   )
 };

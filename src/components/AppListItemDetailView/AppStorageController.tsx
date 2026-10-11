@@ -12,6 +12,7 @@ import { useState } from "react";
 import { ExternalAppInstallCustomModal } from "./ExternalAppInstallCustomModal";
 import * as BangleJsUrls from "../../api/banglejs/urls";
 import { ActivateAppButton } from "./AppStorageController/Buttons/ActivateAppButton";
+import { setActiveApp } from "../../services/Espruino/setActiveApp";
 
 interface ControlButtonProps extends AppDetailViewProps {
   device: EspruinoDevice;
@@ -38,16 +39,6 @@ const InstallControlButton = (props: ControlButtonProps) => {
       </UiButton>
     )
   }
-  const setActive = async (app: AppItem) => {
-    if (app.type === "clock" || app.type === "launcher") {
-      const settings = await EspruinoComms.readFile("setting.json");
-      await EspruinoComms.writeFile("setting.json", JSON.stringify({
-        ...JSON.parse(settings),
-        [app.type]: `${app.id}.app.js`,
-      }))
-      EspruinoComms.resetDevice()
-    }
-  };
 
   if (props.hasInstalled) {
     return (
@@ -99,7 +90,7 @@ const InstallControlButton = (props: ControlButtonProps) => {
           }
 
           await EspruinoComms.uploadApp(props.app, { device });
-          await setActive(props.app);
+          await setActiveApp(props.app);
           await refresh();
         } catch (error) {
           alert((error as Error).message);
