@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { AppListControlValue } from "../components/AppListControlsHeader/AppListControlsHeader";
 import { InputMethod, filterControlMap, sortControl } from "../data/appListControlOptions";
 import { AppItem } from "../api/banglejs/interface";
@@ -34,23 +34,27 @@ const getInitialControlState = (): AppListControlValue => ({
 export const useAppListControl = () => {
   const [ control, setControl ] = useState(getInitialControlState);
 
+  const setFilter = useCallback((key: keyof AppItem, filter: BangleJsAppFilter | undefined) => {
+    setControl( control => ({
+      ...control,
+      filters: {
+        ...control.filters,
+        [key]: filter,
+      },
+    }));
+  }, []);
+
+  const setSortedBy = useCallback((sortedBy: BangleJsAppSortType) => {
+    setControl(control => ({
+      ...control,
+      sortedBy,
+    }));
+  }, []);
+
   return {
     sortedBy: control.sortedBy,
     filters: control.filters,
-    setFilter: (key: keyof AppItem, filter: BangleJsAppFilter | undefined) => {
-      setControl( control => ({
-        ...control,
-        filters: {
-          ...control.filters,
-          [key]: filter,
-        },
-      }));
-    },
-    setSortedBy: (sortedBy: BangleJsAppSortType) => {
-      setControl(control => ({
-        ...control,
-        sortedBy,
-      }));
-    },
+    setFilter,
+    setSortedBy,
   };
 };

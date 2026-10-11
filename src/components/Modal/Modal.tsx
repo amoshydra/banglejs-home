@@ -20,7 +20,7 @@ export const Modal = (p: ModalProps) => {
     return () => {
       modal?.close();
     }
-  }, );
+  }, []);
 
   return (
     <dialog
