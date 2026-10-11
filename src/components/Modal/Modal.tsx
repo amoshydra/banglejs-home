@@ -4,7 +4,6 @@ import { Layout } from "../Layout";
 import { UiButton } from "../Buttons/UiButton";
 import { ButtonIconContainer } from "../Buttons/ButtonIconContainer";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
-import { pushDialog, removeDialog } from "../../services/DialogStack";
 
 export interface ModalProps {
   top?: ReactNode;
@@ -20,9 +19,7 @@ export const Modal = (p: ModalProps) => {
     if (!modal) return;
 
     modal.showModal();
-    pushDialog(modal);
     return () => {
-      removeDialog(modal);
       modal.close();
     }
   }, []);
