@@ -34,7 +34,20 @@ export const AppList = ({ isLoading, error, data: apps, ...props }: AppListProps
             return <MessageWrapper>Fetching store...</MessageWrapper>
           }
           if (error) {
-            return <MessageWrapper>Error fetching store, please try again later...</MessageWrapper>
+            return (
+              <MessageWrapper>
+                <div>Error fetching store, please try again later...</div>
+                <pre
+                  css={css`
+                    margin-top: 1rem;
+                    font-size: 0.75rem;
+                    opacity: 0.6;
+                    white-space: pre-wrap;
+                    word-break: break-word;
+                  `}
+                >{error.message}</pre>
+              </MessageWrapper>
+            )
           }
 
           return (

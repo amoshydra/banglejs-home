@@ -51,6 +51,11 @@ yarn
 yarn dev
 ```
 
+`yarn dev` generates the app catalogue (`apps.json`) automatically from the
+submodule's `apps/*/metadata.json` — upstream ships `apps.json` as a
+placeholder, and the real file is otherwise only built at deploy time. Run
+`yarn apps:json` to regenerate it by hand.
+
 ## BangleApps integration
 
 This project does not reimplement the loader. It grafts a React UI onto the
