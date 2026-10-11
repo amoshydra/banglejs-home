@@ -7,7 +7,9 @@
     "node": ">=20"
   },
   "scripts": {
+    "predev": "bash scripts/generate-apps-json.sh || true",
     "dev": "vite",
+    "apps:json": "bash scripts/generate-apps-json.sh",
     "build": "tsc && vite build",
     "test": "vitest",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
