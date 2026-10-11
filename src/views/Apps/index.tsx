@@ -6,7 +6,8 @@ import { useParams } from 'react-router-dom';
 import { useAppListControl } from '../../hooks/appListControl';
 import { useEspruinoDeviceInfoStore } from '../../services/Espruino/stores/EspruinoDevice';
 import { filterControlMap } from '../../data/appListControlOptions';
-import { lazy, Suspense, useEffect } from 'react';
+import { isUpdateAvailable } from '../../api/banglejs/updates';
+import { lazy, Suspense, useEffect, useMemo } from 'react';
 
 // The detail view pulls in the markdown pipeline (remark/rehype/highlight),
 // so load it on demand instead of in the initial bundle.
@@ -17,10 +18,27 @@ const AppListItemDetailView = lazy(() =>
 
 function App() {
   const device = useEspruinoDeviceInfoStore(state => state.device);
-  const { filters, setFilter, sortedBy, setSortedBy } = useAppListControl();
+  const { filters, setFilter, sortedBy, setSortedBy, deviceFilter, setDeviceFilter } = useAppListControl();
   const { data: apps } = useApps();
   const { data: sortedApps, error, isLoading } = useSortedApps(sortedBy);
-  const filteredApps = filterApps(sortedApps, filters);
+
+  const installedById = useMemo(
+    () => new Map((device?.appsInstalled ?? []).map(app => [app.id, app])),
+    [device],
+  );
+
+  const filteredApps = useMemo(() => {
+    const byFilter = filterApps(sortedApps, filters);
+
+    if (deviceFilter === "installed") {
+      return byFilter.filter(app => installedById.has(app.id));
+    }
+    if (deviceFilter === "updates") {
+      return byFilter.filter(app => isUpdateAvailable(app, installedById.get(app.id)));
+    }
+
+    return byFilter;
+  }, [sortedApps, filters, deviceFilter, installedById]);
 
   const { appId } = useParams();
 
@@ -44,6 +62,8 @@ function App() {
           sortedBy={sortedBy}
           onFilterChange={setFilter}
           onSortedByChange={setSortedBy}
+          deviceFilter={deviceFilter}
+          onDeviceFilterChange={setDeviceFilter}
         />
       }
       children={

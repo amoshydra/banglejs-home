@@ -8,12 +8,33 @@ export const sortControl = {
     type: "radio" as const,
     options: [
       { label: "Favourited", value: "favourited" as const },
-      { label: "Installed", value: "installed" as const },
+      { label: "Popular", value: "installed" as const },
       { label: "Modified", value: "modified" as const, default: true },
       { label: "Created", value: "created" as const },
     ],
   },
 };
+
+/**
+ * Device-aware filter. Unlike `filterControlMap`, these need the connected
+ * device's installed-app list, so they are applied in the view rather than
+ * through the pure (AppItem) => boolean filter map.
+ */
+export const deviceFilterControl = {
+  key: "deviceFilter",
+  label: "Show",
+  inputMethod: {
+    type: "radio" as const,
+    options: [
+      { label: "All", value: "all" as const, default: true },
+      { label: "Installed", value: "installed" as const },
+      { label: "Updates", value: "updates" as const },
+    ],
+  },
+};
+
+export type DeviceFilter =
+  (typeof deviceFilterControl.inputMethod.options)[number]["value"];
 
 export const filterControlMap = {
   __search: {

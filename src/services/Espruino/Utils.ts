@@ -18,7 +18,7 @@ declare const Utils: {
   appSorterUpdatesFirst: (a: AppItem, b: AppItem) => 0 | -1 | 1,
   searchRelevance: (value: string, searchString: string) => number,
   getVersionInfo: (appListing: AppItem, appInstalled: AppItem) => string;
-  isAppUpdateable: (appListing: AppItem, appInstalled: AppItem) => boolean;
+  isAppUpdateable: (appInstalled: { version?: string }, appListing: { version?: string }) => boolean;
   versionLess: (appInstalledVersion: string, appListingVersion: string) => boolean,
   debounce: <T extends (...args: unknown[]) => void>(cb: T, ms: number) => void;
   /**

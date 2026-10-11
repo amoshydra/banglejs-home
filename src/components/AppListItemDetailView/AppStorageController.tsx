@@ -13,6 +13,7 @@ import { ExternalAppInstallCustomModal } from "./ExternalAppInstallCustomModal";
 import * as BangleJsUrls from "../../api/banglejs/urls";
 import { ActivateAppButton } from "./AppStorageController/Buttons/ActivateAppButton";
 import { setActiveApp } from "../../services/Espruino/setActiveApp";
+import { isUpdateAvailable } from "../../api/banglejs/updates";
 
 interface ControlButtonProps extends AppDetailViewProps {
   device: EspruinoDevice;
@@ -251,7 +252,7 @@ export const AppStorageController = (props: AppDetailViewProps) => {
   const { device, connect, connectionPending } = useEspruinoDeviceInfoStore(useShallow(({ device, connect, connectionPending }) => ({ device, connect, connectionPending })));
   const matchingInstallApp = device && (device.appsInstalled.find(app => app.id === props.app.id));
   const hasInstalled = !!matchingInstallApp;
-  const hasUpdate = hasInstalled && matchingInstallApp.version !== props.app.version;
+  const hasUpdate = isUpdateAvailable(props.app, matchingInstallApp ?? undefined);
 
   return (
     <div

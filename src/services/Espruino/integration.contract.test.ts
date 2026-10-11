@@ -40,7 +40,7 @@ describe("BangleApps submodule integration contract", () => {
     expect(utils).toMatch(/parseRJSON\s*:/);
     // The EspruinoHttp patch replaces this global function.
     expect(utils).toMatch(/^function httpGet/m);
-    for (const field of ["FILES_IN_FS", "SINGLE_APP_ONLY", "UPLOAD_CHUNKSIZE", "NO_RESET"]) {
+    for (const field of ["FILES_IN_FS", "SINGLE_APP_ONLY", "UPLOAD_CHUNKSIZE", "NO_RESET", "versionLess", "isAppUpdateable"]) {
       expect(utils, `Const.${field}`).toContain(field);
     }
   });

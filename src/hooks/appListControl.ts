@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { AppListControlValue } from "../components/AppListControlsHeader/AppListControlsHeader";
-import { InputMethod, filterControlMap, sortControl } from "../data/appListControlOptions";
+import { InputMethod, filterControlMap, sortControl, deviceFilterControl, DeviceFilter } from "../data/appListControlOptions";
 import { AppItem } from "../api/banglejs/interface";
 import { BangleJsAppFilter, BangleJsAppSortType } from "../api/banglejs/methods";
 
@@ -28,6 +28,7 @@ const getInitialControlState = (): AppListControlValue => ({
       )
   ),
   sortedBy: extractDefaultValue(sortControl.inputMethod),
+  deviceFilter: extractDefaultValue(deviceFilterControl.inputMethod),
 });
 
 
@@ -51,10 +52,19 @@ export const useAppListControl = () => {
     }));
   }, []);
 
+  const setDeviceFilter = useCallback((deviceFilter: DeviceFilter) => {
+    setControl(control => ({
+      ...control,
+      deviceFilter,
+    }));
+  }, []);
+
   return {
     sortedBy: control.sortedBy,
     filters: control.filters,
+    deviceFilter: control.deviceFilter,
     setFilter,
     setSortedBy,
+    setDeviceFilter,
   };
 };

@@ -1,6 +1,8 @@
 import { css } from "@emotion/react";
 import { AppItem } from "../api/banglejs/interface";
 import * as BangleJsUrls from "../api/banglejs/urls";
+import { useEspruinoDeviceInfoStore } from "../services/Espruino/stores/EspruinoDevice";
+import { isUpdateAvailable } from "../api/banglejs/updates";
 
 export interface AppListItemProps {
   app: {
@@ -10,10 +12,16 @@ export interface AppListItemProps {
     description?: AppItem["description"],
     type?: AppItem["type"],
     tags?: AppItem["tags"],
+    version?: AppItem["version"],
   };
 }
 
 export const AppListItem = ({ app }: AppListItemProps) => {
+  const installed = useEspruinoDeviceInfoStore(state =>
+    state.device?.appsInstalled.find(installedApp => installedApp.id === app.id)
+  );
+  const hasUpdate = isUpdateAvailable(app, installed);
+
   return (
     <div
       css={css`
@@ -53,8 +61,14 @@ export const AppListItem = ({ app }: AppListItemProps) => {
       >
         <div
           css={css`
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
           `}
-        >{app.name}</div>
+        >
+          <div>{app.name}</div>
+          {hasUpdate && <span css={cssUpdateBadge}>update</span>}
+        </div>
         <div
           css={css`
             display: -webkit-box;
@@ -125,4 +139,16 @@ const cssTag = css`
   text-transform: lowercase;
   font-size: 0.75rem;
   opacity: 0.5;
+`;
+
+const cssUpdateBadge = css`
+  background: #2b6cb0;
+  color: white;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+  opacity: 1;
 `;
