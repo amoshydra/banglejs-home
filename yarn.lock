@@ -473,10 +473,10 @@
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-19.3.0.tgz#90294a9266efd928a5266f2110d60d5dba5015d2"
   integrity sha512-ZI7bU42mZXXKHn/qNLEw2IrbiINU7X5+vfgdixBHkCNpYWXjKgfQ/P+uyGb5CjOLB9UcnTeg3rylQtV2hym44Q==
 
-"@types/react-virtualized@^9.21.29":
-  version "9.21.29"
-  resolved "https://registry.yarnpkg.com/@types/react-virtualized/-/react-virtualized-9.21.29.tgz#480b647f43a42f8e414d1af49a0ccd9b16537655"
-  integrity sha512-+ODVQ+AyKngenj4OPpg43Hz4B9Rdjuz1Naxu9ypNc3Cjo0WVZTYhqXfF/Nm38i8PV/YXECRIl4mTAZK5hq2B+g==
+"@types/react-virtualized@^9.22.4":
+  version "9.22.4"
+  resolved "https://registry.yarnpkg.com/@types/react-virtualized/-/react-virtualized-9.22.4.tgz#5f5af17c35ec7963e2804aab42e0716fb12f9527"
+  integrity sha512-7xBz1a/zXt4Qpogi9khBeaZhphcHPnEF3uchRXsqsKhpHwgxgrpo6OgghLqgc5NWQ6aj5/ws7HaNzIShKNCnXg==
   dependencies:
     "@types/prop-types" "*"
     "@types/react" "*"
