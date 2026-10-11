@@ -1,5 +1,7 @@
 import toast, { Toaster } from 'react-hot-toast';
+import { createPortal } from 'react-dom';
 import { EspruinoProgress } from "../services/Espruino/Progress";
+import { useTopDialog } from './DialogStack';
 
 const augmentedWindow = window as unknown as { Progress: typeof EspruinoProgress };
 const GLOBAL_PROGRESS_ID = "GLOBAL_PROGRESS_ID";
@@ -40,5 +42,7 @@ augmentedWindow.Progress = Object.defineProperties(Object.create(null), {
 });
 
 export const GlobalProgressToaster = () => {
-  return <Toaster />
+  const topDialog = useTopDialog();
+  // Render into the topmost open <dialog> so toasts stay above its top layer.
+  return createPortal(<Toaster />, topDialog ?? document.body);
 };
