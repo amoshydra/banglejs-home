@@ -7,6 +7,7 @@ import { AppListItemDetailView } from '../../components/AppListItemDetailView/Ap
 import { useAppListControl } from '../../hooks/appListControl';
 import { useEspruinoDeviceInfoStore } from '../../services/Espruino/stores/EspruinoDevice';
 import { filterControlMap } from '../../data/appListControlOptions';
+import { useEffect } from 'react';
 
 function App() {
   const device = useEspruinoDeviceInfoStore(state => state.device);
@@ -15,15 +16,19 @@ function App() {
   const { data: sortedApps, error, isLoading } = useSortedApps(sortedBy);
   const filteredApps = filterApps(sortedApps, filters);
 
-  if (device && device.id) {
-    const foundOption = filterControlMap.supports.inputMethod.options.find(option => option.label.replace(/ /g, '').toUpperCase() === device.id)?.value;
+  const { appId } = useParams();
+
+  // Default the device filter to the connected watch model.
+  useEffect(() => {
+    if (!device?.id) return;
+
+    const foundOption = filterControlMap.supports.inputMethod.options
+      .find(option => option.label.replace(/ /g, '').toUpperCase() === device.id)?.value;
+
     if (foundOption && filters.supports !== foundOption) {
       setFilter("supports", foundOption);
-      console.log("setting");
     }
-  }
-
-  const { appId } = useParams();
+  }, [device, filters.supports, setFilter]);
 
   return (
     <Layout

@@ -7,26 +7,26 @@ interface ReqResponse<T> {
   error: null;
 }
 
-const request = async<T>(path: string, cb: (res: Response) => T): Promise<ReqResponse<T>> => {
+const request = async<T>(path: string, cb: (res: Response) => Promise<T>): Promise<ReqResponse<T>> => {
   const url = new URL(path, BangleJsUrls.BaseUrl);
   const res = await fetch(url);
 
-  const jsonResponse = await cb(res)
-  if (res.ok) {
-    return {
-      error: null,
-      data: jsonResponse,
-    };
+  if (!res.ok) {
+    throw new Error(`Request failed with ${res.status} ${res.statusText} for ${url.href}`);
   }
-  throw new Error("error");
+
+  return {
+    error: null,
+    data: await cb(res),
+  };
 };
 
 const requestText = async<T>(path: string): Promise<ReqResponse<T>> => {
-  return request(path, (res) => res.text() as T)
+  return request(path, (res) => res.text() as Promise<T>)
 };
 
 const requestJson = async<T>(path: string): Promise<ReqResponse<T>> => {
-  return request(path, (res) => res.json() as T)
+  return request(path, (res) => res.json() as Promise<T>)
 };
 
 export const getApps = async () => {
