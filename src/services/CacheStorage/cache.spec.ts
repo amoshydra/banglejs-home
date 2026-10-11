@@ -67,7 +67,7 @@ describe("write", () => {
       mockWriter,
     );
 
-    expect(mockWriter.mock.lastCall[0]).toBe(
+    expect(mockWriter.mock.calls[0][0]).toBe(
       JSON.stringify({
         created: 1000,
         caches: [

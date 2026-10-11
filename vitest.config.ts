@@ -6,6 +6,7 @@ export default defineConfig({
       ...configDefaults.exclude,
       // Vendored upstream BangleApps ships its own (non-vitest) test files.
       "public/externals/**",
+      "dist/**",
     ],
   },
 });
