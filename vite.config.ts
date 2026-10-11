@@ -12,4 +12,11 @@ export default defineConfig({
       plugins: ["@emotion/babel-plugin"],
     },
   })],
+  optimizeDeps: {
+    // Only scan our own entry. The vendored BangleApps tree under public/
+    // ships thousands of Espruino modules whose bare imports (eg
+    // `import ... from "Storage"`) are not npm packages; letting Vite 8's
+    // default entry inference crawl them breaks dependency pre-bundling.
+    entries: ['index.html'],
+  },
 })
