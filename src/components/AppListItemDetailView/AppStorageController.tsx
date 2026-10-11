@@ -23,18 +23,49 @@ interface ControlButtonProps extends AppDetailViewProps {
 
 const InstallControlButton = (props: ControlButtonProps) => {
   const refresh = useEspruinoDeviceInfoStore(state => state.refresh);
+  const [installing, setInstalling] = useState(false);
 
   if (!props.app.storage.length) {
     return null;
   }
 
+  const install = async () => {
+    if (installing) return;
+    setInstalling(true);
+    try {
+      const device = props.device;
+
+      for (const dependencyAppId of Object.keys(props.app.dependencies ?? {})) {
+        const hasInstalled = device.appsInstalled.find(app => app.id === dependencyAppId);
+        if (hasInstalled) continue;
+
+        const dependencyApp = props.apps.find(app => app.id === dependencyAppId);
+        if (!dependencyApp) {
+          throw new Error(`dependency required "${dependencyAppId}" is not found`);
+        }
+
+        await EspruinoComms.uploadApp(dependencyApp, { device });
+        // TODO: Implement dependency clash with the usage of provide_modules
+        // see AppInfo.checkDependencies
+      }
+
+      await EspruinoComms.uploadApp(props.app, { device });
+      await setActiveApp(props.app);
+      await refresh();
+    } catch (error) {
+      alert((error as Error).message);
+    } finally {
+      setInstalling(false);
+    }
+  };
+
   if (props.hasUpdate) {
     return (
-      <UiButton fullWidth>
+      <UiButton fullWidth disabled={installing} onClick={install}>
         <ButtonIconContainer
           leftIcon={faDownload}
         >
-          Update
+          {installing ? "Updating" : "Update"}
         </ButtonIconContainer>
       </UiButton>
     )
@@ -65,43 +96,13 @@ const InstallControlButton = (props: ControlButtonProps) => {
   return (
     <UiButton
       fullWidth
-      disabled={props.hasInstalled}
-      onClick={async () => {
-        try {
-          const device = props.device;
-
-          if (props.app.dependencies) {
-            Object.entries(props.app.dependencies)
-              .map(async ([dependencyAppId]) => {
-                const hasInstalled = device.appsInstalled.find(app => app.id === dependencyAppId);
-                if (hasInstalled) return;
-
-                const dependencyApp = props.apps.find(app => app.id === dependencyAppId);
-                if (!dependencyApp) {
-                  const errorMessage = `dependency required "${dependencyAppId}" is not found`;
-                  alert(errorMessage);
-                  throw new Error(errorMessage)
-                }
-
-                await EspruinoComms.uploadApp(dependencyApp, { device });
-                // TODO: Implement dependency clash with the usage of provide_modules
-                // see AppInfo.checkDependencies
-              })
-          }
-
-          await EspruinoComms.uploadApp(props.app, { device });
-          await setActiveApp(props.app);
-          await refresh();
-        } catch (error) {
-          alert((error as Error).message);
-          throw error;
-        }
-      }}
+      disabled={installing}
+      onClick={install}
     >
       <ButtonIconContainer
         leftIcon={faDownload}
       >
-        Install
+        {installing ? "Installing" : "Install"}
       </ButtonIconContainer>
     </UiButton>
   )
@@ -211,12 +212,16 @@ const InterfaceConfigureControlButton = (props: ControlButtonProps) => {
 
 const UninstallControlButton = (props: ControlButtonProps) => {
   const refresh = useEspruinoDeviceInfoStore(state => state.refresh);
+  const [removing, setRemoving] = useState(false);
 
   if (props.hasInstalled) {
     return (
       <UiButton
         fullWidth
+        disabled={removing}
         onClick={async () => {
+          if (removing) return;
+          setRemoving(true);
           try {
             if (!props.device) {
               await EspruinoComms.getDeviceInfo();
@@ -225,14 +230,15 @@ const UninstallControlButton = (props: ControlButtonProps) => {
             await refresh();
           } catch (error) {
             alert((error as Error).message);
-            throw error;
+          } finally {
+            setRemoving(false);
           }
         }}
       >
         <ButtonIconContainer
           leftIcon={faTrash}
         >
-          Remove
+          {removing ? "Removing" : "Remove"}
         </ButtonIconContainer>
       </UiButton>
     );
