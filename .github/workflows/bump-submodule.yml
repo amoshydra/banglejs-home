@@ -1,4 +1,4 @@
-name: Bump BangleApps submodule
+name: Sync BangleApps submodule
 
 on:
   # Weekly, Monday 06:00 UTC
@@ -8,20 +8,27 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 concurrency:
-  group: 'bump-bangleapps'
+  group: 'sync-bangleapps'
   cancel-in-progress: true
 
 jobs:
-  bump:
+  sync:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
+          ref: main
           submodules: recursive
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
       - name: Update submodule to upstream master
         id: update
         run: |
@@ -37,20 +44,26 @@ jobs:
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
-      - name: Open or update pull request
+      # Gate: only keep the bump if the app still builds against the new
+      # submodule and the integration contract test still passes.
+      - name: Contract test
+        if: steps.update.outputs.changed == 'true'
+        run: yarn test --run
+      - name: Lint
+        if: steps.update.outputs.changed == 'true'
+        run: yarn lint
+      - name: Build
+        if: steps.update.outputs.changed == 'true'
+        run: yarn build
+      - name: Commit and push
         if: steps.update.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
           SHA: ${{ steps.update.outputs.sha }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          branch="chore/bump-bangleapps"
-          git checkout -B "$branch"
-          git commit -m "chore: bump BangleApps submodule to $SHA"
-          git push -f origin "$branch"
-          gh pr view "$branch" >/dev/null 2>&1 || \
-            gh pr create --base main --head "$branch" \
-              --title "chore: bump BangleApps submodule to $SHA" \
-              --body "Automated bump of the vendored BangleApps submodule to espruino/BangleApps@$SHA. CI runs the submodule integration contract test plus lint/test/build. Please device-test (connect, install, activate, remove) before merging."
-          echo "PR ready: $branch"
+          git commit -m "chore: sync BangleApps submodule to $SHA"
+          git push origin main
+      - name: No update
+        if: steps.update.outputs.changed != 'true'
+        run: echo "Submodule already at upstream master; nothing to do."

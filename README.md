@@ -79,8 +79,10 @@ BangleApps commit, and **a bump must be tested before merging**.
 
 The build uses the **pinned** submodule commit (not upstream `master`), so
 production only changes when the pin changes. A scheduled workflow
-(`.github/workflows/bump-submodule.yml`) opens this as a PR weekly; you can
-also do it by hand:
+(`.github/workflows/bump-submodule.yml`, Mondays 06:00 UTC) syncs the pin to
+upstream `master` **only if the app still passes the integration contract
+test, lint and build** against it; otherwise it leaves the pin untouched.
+You can also bump by hand:
 
 ```bash
 git submodule update --init --recursive
