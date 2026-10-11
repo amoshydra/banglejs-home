@@ -49,7 +49,7 @@ const CustomIframe = (props: CustomIframe) => {
           type: "init",
           expectedInterface: props.customInterfaceOptions.jsFile,
           data: device,
-        }, "*");
+        }, location.origin);
     
         // Push any data received back through to IFRAME
         if (EspruinoComms.isConnected())
@@ -71,6 +71,9 @@ const CustomIframe = (props: CustomIframe) => {
         /* if we get a message from the iframe (eg asking to send data to Puck), handle it
         otherwise pass to messageHandler because handleCustomApp may want to handle it */
         iframe.contentWindow?.addEventListener("message", function (event) {
+          // Only accept messages that actually come from this iframe.
+          if (event.source !== iframe.contentWindow) return;
+
           const message = event.data;
           if (message.type == "close") {
             props.onDismiss()

@@ -10,6 +10,7 @@ import {
 import App from './views/Apps';
 import { SWRConfig } from 'swr';
 import { GlobalProgressToaster } from './services/GlobalProgress';
+import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import { EspruinoComms } from './services/Espruino/Comms';
 import { useEspruinoDeviceInfoStore } from './services/Espruino/stores/EspruinoDevice';
 import { useShallow } from 'zustand/react/shallow';
@@ -59,7 +60,9 @@ function Entry() {
 
   return (
     <SWRConfig value={{ provider: localStorageProvider }}>
-      <RouterProvider router={router} />
+      <ErrorBoundary>
+        <RouterProvider router={router} />
+      </ErrorBoundary>
       <GlobalProgressToaster />
     </SWRConfig>
   )
