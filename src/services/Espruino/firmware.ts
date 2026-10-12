@@ -37,6 +37,8 @@ export const fetchLatestFirmwareVersion = async (): Promise<string | null> => {
   return latestFirmwareVersion(parseFirmwareVersions(await res.text()));
 };
 
-/** The firmware updater (or anything firmware-related). */
-export const isFirmwareApp = (app: { id?: string; name?: string }): boolean =>
-  app.id === "fwupdate" || /firmware/i.test(app.name ?? "");
+/** Bangle.js 2 is the only device this app can update firmware on. */
+export const isBangleJS2 = (deviceId?: string): boolean => deviceId === "BANGLEJS2";
+
+/** The firmware updater app. */
+export const isFirmwareApp = (app: { id?: string }): boolean => app.id === "fwupdate";

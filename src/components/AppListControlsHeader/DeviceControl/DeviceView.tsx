@@ -2,7 +2,7 @@ import { EspruinoDevice } from "../../../services/Espruino/interface";
 import { DeviceViewInstalledApps } from "./DeviceViewInstalledApps/DeviceViewInstalledApps";
 import { DeviceViewControls } from "./DeviceViewControls/DeviceViewControls";
 import { useLatestFirmware } from "../../../hooks/useLatestFirmware";
-import { versionLess } from "../../../services/Espruino/firmware";
+import { isBangleJS2, versionLess } from "../../../services/Espruino/firmware";
 
 interface DeviceViewProps {
   device: EspruinoDevice;
@@ -11,7 +11,7 @@ interface DeviceViewProps {
 export const DeviceView = (props: DeviceViewProps) => {
   const { latest } = useLatestFirmware();
   const firmwareUpdateAvailable =
-    !!props.device.version && !!latest && versionLess(props.device.version, latest);
+    isBangleJS2(props.device.id) && !!latest && versionLess(props.device.version, latest);
 
   return (
     <div className={props.className}>

@@ -51,22 +51,25 @@ const CustomIframe = (props: CustomIframe) => {
           data: device,
         }, location.origin);
     
-        // Push any data received back through to IFRAME
-        if (EspruinoComms.isConnected())
+        // Push any data received back through to IFRAME.
+        // Comms.on() throws when there is no active connection (see
+        // vendor comms.js), so only register it when connected - otherwise
+        // it would abort onLoad before the message listener below is added.
+        if (EspruinoComms.isConnected()) {
           console.log("Adding Comms.on('data') handler for iframe");
-    
-        EspruinoComms.on("data", data => {
-          if (!iframe.contentWindow) {
-            // if no frame, disable
-            console.log("Removing Comms.on('data') handler");
-            EspruinoComms.on("data");
-            return;
-          }
-          iframe.contentWindow.postMessage({
-            type: "recvdata",
-            data: data
+          EspruinoComms.on("data", data => {
+            if (!iframe.contentWindow) {
+              // if no frame, disable
+              console.log("Removing Comms.on('data') handler");
+              EspruinoComms.on("data");
+              return;
+            }
+            iframe.contentWindow.postMessage({
+              type: "recvdata",
+              data: data
+            });
           });
-        });
+        }
 
         /* if we get a message from the iframe (eg asking to send data to Puck), handle it
         otherwise pass to messageHandler because handleCustomApp may want to handle it */

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Modal } from "../../Modal/Modal";
 import { DeviceView } from "./DeviceView";
 import { useLatestFirmware } from "../../../hooks/useLatestFirmware";
-import { versionLess } from "../../../services/Espruino/firmware";
+import { isBangleJS2, versionLess } from "../../../services/Espruino/firmware";
 
 
 enum ConnectionState {
@@ -48,7 +48,13 @@ export const DeviceControl = () => {
   const buttonProps = ButtonActionText[connectionState];
   const [deviceInfoModalVisible, setDeviceInforModalVisible] = useState(false)
   const { latest } = useLatestFirmware();
-  const firmwareUpdateAvailable = !!device?.version && !!latest && versionLess(device.version, latest);
+  const deviceId = device?.id;
+  const deviceVersion = device?.version;
+  const firmwareUpdateAvailable =
+    isBangleJS2(deviceId) &&
+    typeof deviceVersion === "string" &&
+    latest !== null &&
+    versionLess(deviceVersion, latest);
 
   return (
     <>

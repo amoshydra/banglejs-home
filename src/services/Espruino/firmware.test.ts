@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  isBangleJS2,
   isFirmwareApp,
   latestFirmwareVersion,
   parseFirmwareVersions,
@@ -44,9 +45,17 @@ describe("versionLess", () => {
 });
 
 describe("isFirmwareApp", () => {
-  it("detects the firmware updater", () => {
-    expect(isFirmwareApp({ id: "fwupdate", name: "Firmware Update" })).toBe(true);
-    expect(isFirmwareApp({ id: "x", name: "Firmware Version Widget" })).toBe(true);
-    expect(isFirmwareApp({ id: "clock", name: "My Clock" })).toBe(false);
+  it("detects only the firmware updater id", () => {
+    expect(isFirmwareApp({ id: "fwupdate" })).toBe(true);
+    expect(isFirmwareApp({ id: "widver" })).toBe(false);
+    expect(isFirmwareApp({ id: "clock" })).toBe(false);
+  });
+});
+
+describe("isBangleJS2", () => {
+  it("only matches Bangle.js 2", () => {
+    expect(isBangleJS2("BANGLEJS2")).toBe(true);
+    expect(isBangleJS2("BANGLEJS")).toBe(false);
+    expect(isBangleJS2(undefined)).toBe(false);
   });
 });
