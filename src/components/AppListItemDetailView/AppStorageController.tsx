@@ -14,6 +14,7 @@ import * as BangleJsUrls from "../../api/banglejs/urls";
 import { ActivateAppButton } from "./AppStorageController/Buttons/ActivateAppButton";
 import { setActiveApp } from "../../services/Espruino/setActiveApp";
 import { isUpdateAvailable } from "../../api/banglejs/updates";
+import { isFirmwareApp, versionLess } from "../../services/Espruino/firmware";
 
 interface ControlButtonProps extends AppDetailViewProps {
   device: EspruinoDevice;
@@ -26,12 +27,22 @@ const InstallControlButton = (props: ControlButtonProps) => {
   const refresh = useEspruinoDeviceInfoStore(state => state.refresh);
   const [installing, setInstalling] = useState(false);
 
+  // Upstream refuses to install an app whose minimum firmware isn't met.
+  const requiresNewerFirmware =
+    !!props.app.requires_firmware &&
+    !!props.device.version &&
+    versionLess(props.device.version, props.app.requires_firmware);
+
   if (!props.app.storage.length) {
     return null;
   }
 
   const install = async () => {
     if (installing) return;
+    if (requiresNewerFirmware) {
+      alert(`App "${props.app.name}" requires firmware ${props.app.requires_firmware} or higher. You have ${props.device.version}. Please update your firmware first.`);
+      return;
+    }
     setInstalling(true);
     try {
       const device = props.device;
@@ -94,6 +105,21 @@ const InstallControlButton = (props: ControlButtonProps) => {
     );
   }
 
+  if (requiresNewerFirmware) {
+    return (
+      <UiButton
+        fullWidth
+        disabled
+      >
+        <ButtonIconContainer
+          leftIcon={faDownload}
+        >
+          Needs firmware {props.app.requires_firmware}
+        </ButtonIconContainer>
+      </UiButton>
+    )
+  }
+
   return (
     <UiButton
       fullWidth
@@ -118,6 +144,11 @@ const CustomConfigureControlButton = (props: ControlButtonProps) => {
       <UiButton
         fullWidth
         onClick={() => {
+          if (isFirmwareApp(props.app) && !window.confirm(
+            "Firmware updates can brick your Bangle.js if interrupted or given the wrong file. Continue?"
+          )) {
+            return;
+          }
           setUiVisible(v => !v);
         }}
       >

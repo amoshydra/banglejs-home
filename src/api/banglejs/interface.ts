@@ -49,6 +49,8 @@ export interface AppItem {
   custom?: string;
   customConnect?: boolean;
   allow_emulator?: boolean;
+  /** Minimum Espruino firmware version required to run this app, eg "2v29" */
+  requires_firmware?: string;
   /**
    * @example "interface.html"
    */

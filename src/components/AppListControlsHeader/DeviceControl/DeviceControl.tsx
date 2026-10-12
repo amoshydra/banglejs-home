@@ -4,6 +4,8 @@ import { UiButton } from "../../Buttons/UiButton";
 import { useState } from "react";
 import { Modal } from "../../Modal/Modal";
 import { DeviceView } from "./DeviceView";
+import { useLatestFirmware } from "../../../hooks/useLatestFirmware";
+import { isBangleJS2, versionLess } from "../../../services/Espruino/firmware";
 
 
 enum ConnectionState {
@@ -45,26 +47,58 @@ export const DeviceControl = () => {
   const connectionState = getConnectionState({ isConnecting: connectionPending, hasDevice: !!device });
   const buttonProps = ButtonActionText[connectionState];
   const [deviceInfoModalVisible, setDeviceInforModalVisible] = useState(false)
+  const { latest } = useLatestFirmware();
+  const deviceId = device?.id;
+  const deviceVersion = device?.version;
+  const firmwareUpdateAvailable =
+    isBangleJS2(deviceId) &&
+    typeof deviceVersion === "string" &&
+    latest !== null &&
+    versionLess(deviceVersion, latest);
 
   return (
     <>
-      <UiButton
-        size="xs"
+      <span
         css={css`
-          text-transform: capitalize;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
         `}
-        onClick={() => {
-          if (connectionState === ConnectionState.Disconnected) {
-            return connect();
-          }
+      >
+        <UiButton
+          size="xs"
+          css={css`
+            text-transform: capitalize;
+          `}
+          onClick={() => {
+            if (connectionState === ConnectionState.Disconnected) {
+              return connect();
+            }
 
-          if (connectionState === ConnectionState.Connected) {
-            setDeviceInforModalVisible(true);
-            return;
-          }
-        }}
-        {...buttonProps}
-      />
+            if (connectionState === ConnectionState.Connected) {
+              setDeviceInforModalVisible(true);
+              return;
+            }
+          }}
+          {...buttonProps}
+        />
+        {firmwareUpdateAvailable && (
+          <span
+            css={css`
+              background: #b7791f;
+              color: white;
+              padding: 1px 6px;
+              border-radius: 999px;
+              font-size: 0.7rem;
+              text-transform: uppercase;
+              letter-spacing: 0.03em;
+              white-space: nowrap;
+            `}
+          >
+            firmware {latest}
+          </span>
+        )}
+      </span>
       {
         device && deviceInfoModalVisible && (
           <Modal
