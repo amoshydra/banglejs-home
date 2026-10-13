@@ -8,7 +8,7 @@ import { useEspruinoDeviceInfoStore } from "../../services/Espruino/stores/Espru
 import { useShallow } from "zustand/react/shallow";
 import { EspruinoDevice } from "../../services/Espruino/interface";
 import { AppItem } from "../../api/banglejs/interface";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ExternalAppInstallCustomModal } from "./ExternalAppInstallCustomModal";
 import * as BangleJsUrls from "../../api/banglejs/urls";
 import { ActivateAppButton } from "./AppStorageController/Buttons/ActivateAppButton";
@@ -16,7 +16,7 @@ import { setActiveApp } from "../../services/Espruino/setActiveApp";
 import { isUpdateAvailable } from "../../api/banglejs/updates";
 import { isFirmwareApp, versionLess } from "../../services/Espruino/firmware";
 import { installApp, updateInstalledApp } from "../../services/Espruino/appInstall";
-import { runOperation } from "../../services/operations";
+import { runOperation, useOperationStore } from "../../services/operations";
 
 interface ControlButtonProps extends AppDetailViewProps {
   device: EspruinoDevice;
@@ -127,6 +127,17 @@ const InstallControlButton = (props: ControlButtonProps) => {
 const CustomConfigureControlButton = (props: ControlButtonProps) => {
   const [uiVisible, setUiVisible] = useState(false);
   const device = props.device;
+
+  // The firmware updater is a custom page we cannot see inside of, so treat
+  // the whole time its window is open as a protected operation - a back
+  // press then asks before closing instead of silently dropping it.
+  const isFirmware = isFirmwareApp(props.app);
+  useEffect(() => {
+    if (!(uiVisible && isFirmware)) return;
+    const { begin, end } = useOperationStore.getState();
+    begin("Firmware update");
+    return () => end();
+  }, [uiVisible, isFirmware]);
 
   return (
     <>

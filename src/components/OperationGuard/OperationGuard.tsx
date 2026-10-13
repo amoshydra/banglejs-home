@@ -16,7 +16,16 @@ import { confirmLeaveOperation, useOperationStore } from "../../services/operati
 export const OperationGuard = () => {
   const busy = useOperationStore(state => state.count > 0);
 
-  const blocker = useBlocker(busy);
+  // Only block real location changes. State-only modals (device info, config
+  // iframe) push a history entry with the *same* URL; going back out of that
+  // must not be treated as leaving the app.
+  const blocker = useBlocker(({ currentLocation, nextLocation }) =>
+    busy && (
+      currentLocation.pathname !== nextLocation.pathname ||
+      currentLocation.search !== nextLocation.search ||
+      currentLocation.hash !== nextLocation.hash
+    ),
+  );
   useEffect(() => {
     if (blocker.state !== "blocked") return;
     if (confirmLeaveOperation()) {
