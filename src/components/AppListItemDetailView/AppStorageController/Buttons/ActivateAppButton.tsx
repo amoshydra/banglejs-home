@@ -6,6 +6,7 @@ import { EspruinoComms } from "../../../../services/Espruino/Comms";
 import { AppItem } from "../../../../api/banglejs/interface";
 import { EspruinoDevice } from "../../../../services/Espruino/interface";
 import { setActiveApp } from "../../../../services/Espruino/setActiveApp";
+import { errorMessage } from "../../../../services/errorMessage";
 
 interface ActivateAppButtonProps extends UiButtonProps{
   app: AppItem;
@@ -77,7 +78,7 @@ const SetActiveButton = ({ app, ...props }: SetActiveButtonProps) => {
       await setActiveApp(app);
       await refresh();
     } catch (error) {
-      alert((error as Error).message);
+      alert(errorMessage(error));
       throw error;
     }
   }

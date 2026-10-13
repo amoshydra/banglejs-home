@@ -7,6 +7,8 @@ const augmentedWindow = window as unknown as { Progress: typeof EspruinoProgress
 const GLOBAL_PROGRESS_ID = "GLOBAL_PROGRESS_ID";
 let title = "";
 
+const clampPercent = (value: number) => Math.max(0, Math.min(100, Math.round(value)));
+
 augmentedWindow.Progress = Object.defineProperties(Object.create(null), {
   show: {
     get: (): typeof EspruinoProgress["show"] => (options) => {
@@ -19,8 +21,14 @@ augmentedWindow.Progress = Object.defineProperties(Object.create(null), {
           position: "bottom-left",
         })
       }
-      if (options.min) {
-        return toast(`${title} - ${options.min * 100 | 0}%`, {
+      if (typeof options.percent === "number") {
+        return toast(`${title} - ${clampPercent(options.percent)}%`, {
+          id: GLOBAL_PROGRESS_ID,
+          position: "bottom-left",
+        })
+      }
+      if (typeof options.min === "number") {
+        return toast(`${title} - ${clampPercent(options.min * 100)}%`, {
           id: GLOBAL_PROGRESS_ID,
           position: "bottom-left",
         })

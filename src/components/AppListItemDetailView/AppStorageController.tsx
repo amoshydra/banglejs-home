@@ -17,6 +17,7 @@ import { isUpdateAvailable } from "../../api/banglejs/updates";
 import { isFirmwareApp, versionLess } from "../../services/Espruino/firmware";
 import { installApp, updateInstalledApp } from "../../services/Espruino/appInstall";
 import { runOperation, useOperationStore } from "../../services/operations";
+import { errorMessage } from "../../services/errorMessage";
 
 interface ControlButtonProps extends AppDetailViewProps {
   device: EspruinoDevice;
@@ -54,7 +55,7 @@ const InstallControlButton = (props: ControlButtonProps) => {
       await setActiveApp(app);
       await refresh();
     } catch (error) {
-      alert((error as Error).message);
+      alert(errorMessage(error));
     } finally {
       setInstalling(false);
     }
@@ -198,7 +199,7 @@ const CustomConfigureControlButton = (props: ControlButtonProps) => {
                   // skip its "hold to reload" finish step; upstream forwards
                   // msg.options.noFinish the same way (see handleCustomApp).
                   noFinish: msg.options?.noFinish,
-                }).catch(error => alert((error as Error).message));
+                }).catch(error => alert(errorMessage(error)));
               }
             }
           }}
@@ -269,7 +270,7 @@ const UninstallControlButton = (props: ControlButtonProps) => {
             });
             await refresh();
           } catch (error) {
-            alert((error as Error).message);
+            alert(errorMessage(error));
           } finally {
             setRemoving(false);
           }
