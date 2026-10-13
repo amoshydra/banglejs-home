@@ -27,6 +27,12 @@ export const Modal = (p: ModalProps) => {
   return (
     <dialog
       ref={ref}
+      onCancel={(event) => {
+        // Escape closes the dialog natively; route it through onDismiss so the
+        // route/state stay in sync with what's on screen.
+        event.preventDefault();
+        p.onDismiss?.();
+      }}
       css={cssDialog}
     >
       <Layout
@@ -45,6 +51,7 @@ export const Modal = (p: ModalProps) => {
             <div>
               <UiButton
                 size="xs"
+                aria-label="Close"
                 onClick={() => p.onDismiss?.()}
               >
                 <ButtonIconContainer

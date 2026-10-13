@@ -60,7 +60,7 @@ export const AppToolbar = (p: AppToolbarProps) => {
             background: #1a1a1a;
             border-radius: 9px;
             padding: 0 0.6rem;
-            color: rgba(255, 255, 255, 0.45);
+            color: rgba(255, 255, 255, 0.55);
           `}
         >
           <FontAwesomeIcon icon={faMagnifyingGlass} />
@@ -118,7 +118,7 @@ export const AppToolbar = (p: AppToolbarProps) => {
             padding: 0 0.7rem;
             cursor: pointer;
             ${activeCount > 0 && css`
-              background: #646cff;
+              background: var(--accent);
               color: white;
             `}
           `}
@@ -130,7 +130,7 @@ export const AppToolbar = (p: AppToolbarProps) => {
               css={css`
                 background: rgba(255, 255, 255, 0.25);
                 border-radius: 999px;
-                font-size: 0.65rem;
+                font-size: 0.75rem;
                 line-height: 1.4;
                 padding: 0 0.35rem;
               `}

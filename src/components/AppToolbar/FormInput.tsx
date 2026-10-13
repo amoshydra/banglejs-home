@@ -57,10 +57,10 @@ export const FormInput = <T,>({ name, label, inputMethod, value, onValueChange }
     >
       <legend
         css={css`
-          font-size: 0.7rem;
+          font-size: 0.75rem;
           text-transform: uppercase;
           letter-spacing: 0.07em;
-          opacity: 0.45;
+          opacity: 0.55;
           padding: 0;
           margin-bottom: 0.4rem;
         `}
@@ -76,6 +76,7 @@ export const FormInput = <T,>({ name, label, inputMethod, value, onValueChange }
           <label
             key={option.label}
             css={css`
+              position: relative;
               display: inline-flex;
               align-items: center;
               gap: 0.35rem;
@@ -86,11 +87,25 @@ export const FormInput = <T,>({ name, label, inputMethod, value, onValueChange }
               cursor: pointer;
 
               &:has(input:checked) {
-                background: #646cff;
+                background: var(--accent);
                 color: white;
               }
+              /* Visually hidden rather than display:none so the input stays
+                 focusable and the chip is keyboard-operable. */
               & input {
-                display: none;
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0 0 0 0);
+                white-space: nowrap;
+                border: 0;
+              }
+              &:has(input:focus-visible) {
+                outline: 2px solid var(--accent-text);
+                outline-offset: 2px;
               }
             `}
           >

@@ -47,7 +47,7 @@ export const DeviceScreen = () => {
               color: white;
               padding: 1px 6px;
               border-radius: 999px;
-              font-size: 0.7rem;
+              font-size: 0.75rem;
               text-transform: uppercase;
               letter-spacing: 0.03em;
               white-space: nowrap;

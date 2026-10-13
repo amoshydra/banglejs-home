@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder, faMagnifyingGlass, faRotate, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { UiButton } from "../../components/Buttons/UiButton";
+import { BottomSheet } from "../../components/BottomSheet/BottomSheet";
 import { useEspruinoDeviceInfoStore } from "../../services/Espruino/stores/EspruinoDevice";
 import { runOperation } from "../../services/operations";
 import { errorMessage } from "../../services/errorMessage";
@@ -112,7 +113,7 @@ export const FilesScreen = () => {
             background: #1a1a1a;
             border-radius: 9px;
             padding: 0 0.6rem;
-            color: rgba(255, 255, 255, 0.45);
+            color: rgba(255, 255, 255, 0.55);
           `}
         >
           <FontAwesomeIcon icon={faMagnifyingGlass} />
@@ -227,10 +228,10 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
   <>
     <div
       css={css`
-        font-size: 0.65rem;
+        font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 0.09em;
-        opacity: 0.4;
+        opacity: 0.55;
         padding: 0.6rem 0.75rem 0.25rem;
       `}
     >{title}</div>
@@ -301,106 +302,77 @@ const FileViewer = ({ file, onClose, onDeleted }: {
   };
 
   return (
+    <BottomSheet open onDismiss={onClose} label={`File ${file.name}`}>
     <div
       css={css`
-        position: fixed;
-        inset: 0;
-        z-index: 60;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       `}
     >
-      <div
-        onClick={onClose}
+      <span
         css={css`
-          position: absolute;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.5);
+          flex: 1 1 auto;
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+          font-size: 0.8rem;
         `}
-      />
-      <div
+      >{file.name}</span>
+      <button type="button" aria-label="Close" onClick={onClose} css={iconButtonCss}>
+        <FontAwesomeIcon icon={faXmark} />
+      </button>
+    </div>
+
+    <div
+      css={css`
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: auto;
+        padding: 0.75rem 1rem;
+      `}
+    >
+      {error ? (
+        <div css={css`color: #f0a3a3; font-size: 0.8rem;`}>{errorMessage(error)}</div>
+      ) : content === undefined ? (
+        <div css={css`opacity: 0.5; font-size: 0.85rem;`}>Reading…</div>
+      ) : (
+        <pre
+          css={css`
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-size: 0.75rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+          `}
+        >{content || "(empty)"}</pre>
+      )}
+    </div>
+
+    <div
+      css={css`
+        flex: 0 0 auto;
+        padding: 0.75rem 1rem 1rem;
+      `}
+    >
+      {deleteError && (
+        <div css={css`color: #f0a3a3; font-size: 0.8rem; margin-bottom: 0.5rem;`}>{deleteError}</div>
+      )}
+      <UiButton
+        fullWidth
+        disabled={deleting}
+        onClick={remove}
         css={css`
-          position: absolute;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          max-height: 85%;
-          display: flex;
-          flex-direction: column;
-          background: #2c2c2c;
-          border-radius: 14px 14px 0 0;
-          box-shadow: 0 -8px 26px rgba(0, 0, 0, 0.5);
+          background: #7f1d1d;
         `}
       >
-        <div
-          css={css`
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-          `}
-        >
-          <span
-            css={css`
-              flex: 1 1 auto;
-              min-width: 0;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-              font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-              font-size: 0.8rem;
-            `}
-          >{file.name}</span>
-          <button type="button" aria-label="Close" onClick={onClose} css={iconButtonCss}>
-            <FontAwesomeIcon icon={faXmark} />
-          </button>
-        </div>
-
-        <div
-          css={css`
-            flex: 1 1 auto;
-            min-height: 0;
-            overflow: auto;
-            padding: 0.75rem 1rem;
-          `}
-        >
-          {error ? (
-            <div css={css`color: #f0a3a3; font-size: 0.8rem;`}>{errorMessage(error)}</div>
-          ) : content === undefined ? (
-            <div css={css`opacity: 0.5; font-size: 0.85rem;`}>Reading…</div>
-          ) : (
-            <pre
-              css={css`
-                margin: 0;
-                white-space: pre-wrap;
-                word-break: break-word;
-                font-size: 0.75rem;
-                font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-              `}
-            >{content || "(empty)"}</pre>
-          )}
-        </div>
-
-        <div
-          css={css`
-            flex: 0 0 auto;
-            padding: 0.75rem 1rem 1rem;
-          `}
-        >
-          {deleteError && (
-            <div css={css`color: #f0a3a3; font-size: 0.8rem; margin-bottom: 0.5rem;`}>{deleteError}</div>
-          )}
-          <UiButton
-            fullWidth
-            disabled={deleting}
-            onClick={remove}
-            css={css`
-              background: #7f1d1d;
-            `}
-          >
-            {deleting ? "Deleting…" : "Delete file"}
-          </UiButton>
-        </div>
-      </div>
+        {deleting ? "Deleting…" : "Delete file"}
+      </UiButton>
     </div>
+    </BottomSheet>
   );
 };

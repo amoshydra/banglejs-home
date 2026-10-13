@@ -38,7 +38,7 @@ const Shell = () => (
     `}
   >
     <OperationGuard />
-    <div
+    <main
       css={css`
         flex: 1 1 auto;
         min-height: 0;
@@ -47,7 +47,7 @@ const Shell = () => (
       `}
     >
       <Outlet />
-    </div>
+    </main>
     <TabBar />
   </div>
 );

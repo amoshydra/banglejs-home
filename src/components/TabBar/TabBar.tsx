@@ -30,6 +30,7 @@ export const TabBar = () => {
 
   return (
     <nav
+      aria-label="Sections"
       css={css`
         flex: 0 0 auto;
         display: flex;
@@ -48,14 +49,14 @@ export const TabBar = () => {
             align-items: center;
             gap: 3px;
             padding: 7px 0 8px;
-            font-size: 0.6rem;
+            font-size: 0.75rem;
             text-decoration: none;
             color: inherit;
-            opacity: 0.5;
+            opacity: 0.7;
 
             &[aria-current="page"] {
               opacity: 1;
-              color: #aab0ff;
+              color: var(--accent-text);
             }
           `}
         >
@@ -68,7 +69,7 @@ export const TabBar = () => {
             <FontAwesomeIcon icon={tab.icon} size="lg" />
             {tab.to === "/device" && connected && (
               <span
-                aria-label="connected"
+                aria-hidden="true"
                 css={css`
                   position: absolute;
                   top: -3px;
@@ -82,8 +83,23 @@ export const TabBar = () => {
             )}
           </span>
           {tab.label}
+          {tab.to === "/device" && connected && (
+            <span css={srOnly}>connected</span>
+          )}
         </NavLink>
       ))}
     </nav>
   );
 };
+
+const srOnly = css`
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+`;

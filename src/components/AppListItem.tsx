@@ -51,7 +51,7 @@ export const AppListItem = ({ app }: AppListItemProps) => {
           background-color: rgba(0,0,0,0.2);
         `}
         loading="lazy"
-        alt={`screenshot for ${app.name}`}
+        alt=""
         src={BangleJsUrls.appImage(app.id, app.icon)}
       />
       <div
@@ -146,7 +146,7 @@ const cssUpdateBadge = css`
   color: white;
   padding: 1px 6px;
   border-radius: 999px;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   flex-shrink: 0;

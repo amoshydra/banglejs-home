@@ -12,7 +12,16 @@
       line-height: 1.5;
       font-weight: 400;
 
-      color-scheme: light dark;
+      /* Dark-only app: without this the UA paints <button>/<dialog> with
+         "buttontext"/"canvastext", which is black under a light OS
+         preference - black text on our dark surfaces. */
+      color-scheme: dark;
+
+      /* Palette tokens (kept in one place so contrast stays consistent). */
+      --accent: #4a52e0;        /* accent behind white text - 5.8:1 */
+      --accent-text: #aab0ff;   /* accent used as text/icon colour - 7.7:1 on #242424 */
+      --text-muted: rgba(255, 255, 255, 0.7); /* 7.6:1 on #2b2b2b */
+
       color: rgba(255, 255, 255, 0.87);
       background-color: #242424;
 

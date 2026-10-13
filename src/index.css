@@ -1,10 +1,10 @@
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--accent-text);
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #cdd1ff;
 }
 
 /* Bangle.js icons and screenshots are pixel art - keep them crisp. */
@@ -32,12 +32,15 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
+  /* Buttons don't inherit colour by default, so without this they keep the
+     UA's buttontext (black under a light preference) on our dark surfaces. */
+  color: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: var(--accent-text);
 }
 button:focus,
 button:focus-visible {

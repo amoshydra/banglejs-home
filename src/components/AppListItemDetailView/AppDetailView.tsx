@@ -47,10 +47,11 @@ const Screenshost = ({ app, className }: AppDetailViewProps) => {
       {
         app.screenshots
           .map(screenshot => BangleJsUrls.appImage(app.id, screenshot.url))
-          .map(src => (
+          .map((src, index) => (
             <img
               key={src}
               src={src || undefined}
+              alt={`${app.name} screenshot ${index + 1}`}
             />
           ))
       }
@@ -78,6 +79,7 @@ const Heading = ({ app, className }: AppDetailViewProps) => {
           flex-basis: 6rem;
           flex-shrink: 0;
         `}
+        alt=""
         src={BangleJsUrls.appImage(app.id, app.icon)}
       />
       <div>
