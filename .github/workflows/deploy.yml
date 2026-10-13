@@ -50,6 +50,10 @@ jobs:
           cp $(which node) ./bin/nodejs
           export PATH="$PATH:$PWD/bin"
           ./bin/create_apps_json.sh apps.json
+          # pre-publish.sh runs bin/sanitycheck.js, which does
+          # require("acorn") and resolves it up into this repo's
+          # node_modules. Keep "acorn" in devDependencies or this step fails
+          # with "Error: no acorn" (it used to arrive via eslint).
           ./bin/pre-publish.sh
         shell: bash
       - name: Build
