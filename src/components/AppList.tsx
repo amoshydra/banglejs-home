@@ -1,8 +1,7 @@
 import { css } from "@emotion/react";
 import { AppItem } from "../api/banglejs/interface";
-import { CSSProperties, HTMLAttributes, useMemo } from "react";
-import { ListRowRenderer, List } from 'react-virtualized/dist/es/List';
-import { useResizeObserver } from "use-resize-observer";
+import { CSSProperties, HTMLAttributes, useRef } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { AppListItemLink } from "./AppListItemLink";
 
 export interface AppListProps {
@@ -13,90 +12,73 @@ export interface AppListProps {
   style?: CSSProperties;
 }
 
-interface Dimension {
-  width: number;
-  height: number;
-}
+const ROW_HEIGHT = 126;
 
-export const AppList = ({ isLoading, error, data: apps, ...props }: AppListProps) => {
-  const { ref, width = 0, height = 0 } = useResizeObserver<HTMLDivElement>();
+export const AppList = ({ isLoading, error, data: apps, className, style }: AppListProps) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  // @tanstack/react-virtual returns unstable function refs, so the React
+  // Compiler skips memoising this component - that is expected here.
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const virtualizer = useVirtualizer({
+    count: apps.length,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: () => ROW_HEIGHT,
+    overscan: 8,
+  });
 
   return (
     <div
-      ref={ref}
+      ref={scrollRef}
+      className={className}
+      style={style}
       css={css`
         height: 100%;
+        overflow-y: auto;
       `}
     >
       {
-        (() => {
-          if (isLoading) {
-            return <MessageWrapper>Fetching store...</MessageWrapper>
-          }
-          if (error) {
-            return (
-              <MessageWrapper>
-                <div>Error fetching store, please try again later...</div>
-                <pre
-                  css={css`
-                    margin-top: 1rem;
-                    font-size: 0.75rem;
-                    opacity: 0.6;
-                    white-space: pre-wrap;
-                    word-break: break-word;
-                  `}
-                >{error.message}</pre>
-              </MessageWrapper>
-            )
-          }
-
-          return (
-            <AppListListView
-              {...props}
-              apps={apps}
-              dimension={{
-                height,
-                width,
-              }}
-            />
-          )
-        })()
+        isLoading ? (
+          <MessageWrapper>Fetching store...</MessageWrapper>
+        ) : error ? (
+          <MessageWrapper>
+            <div>Error fetching store, please try again later...</div>
+            <pre
+              css={css`
+                margin-top: 1rem;
+                font-size: 0.75rem;
+                opacity: 0.6;
+                white-space: pre-wrap;
+                word-break: break-word;
+              `}
+            >{error.message}</pre>
+          </MessageWrapper>
+        ) : (
+          <div
+            css={css`
+              height: ${virtualizer.getTotalSize()}px;
+              position: relative;
+              width: 100%;
+            `}
+          >
+            {virtualizer.getVirtualItems().map((virtualItem) => (
+              <div
+                key={virtualItem.key}
+                css={css`
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  width: 100%;
+                  transform: translateY(${virtualItem.start}px);
+                `}
+              >
+                <AppListItemLink app={apps[virtualItem.index]} />
+              </div>
+            ))}
+          </div>
+        )
       }
     </div>
-  )
-};
-
-interface AppListWaProps {
-  apps: AppItem[];
-  dimension: Dimension;
-}
-
-const AppListListView = ({ apps, dimension, ...props }: AppListWaProps) => {
-  const RowRenderer = useMemo((): ListRowRenderer => (p) => {
-    const app = apps[p.index];
-  
-    return (
-      <AppListItemLink
-        key={p.key}
-        link={{
-          style: p.style,
-        }}
-        app={app}
-      />
-    );
-  }, [apps])
-
-  return (
-    <List
-      {...props}
-      aria-readonly={undefined}
-      width={dimension.width}
-      height={dimension.height}
-      rowCount={apps.length}
-      rowHeight={126}
-      rowRenderer={RowRenderer}
-    />
-  )
+  );
 };
 
 const MessageWrapper = (p: HTMLAttributes<HTMLDivElement>) => {
