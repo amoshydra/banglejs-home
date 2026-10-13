@@ -65,6 +65,10 @@ export const BottomSheet = ({ open, onDismiss, label, children, maxHeight = "85%
         color: inherit;
         box-shadow: 0 -8px 26px rgba(0, 0, 0, 0.5);
         overflow: hidden;
+        /* Sheets sit in the top layer, outside the shell's padding. */
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
 
         &[open] {
           display: flex;

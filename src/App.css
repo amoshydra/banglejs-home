@@ -10,10 +10,13 @@ body {
   margin-right: auto;
 }
 
-/* Required to implement nested scroller on the layout component*/
+/* Required to implement nested scroller on the layout component.
+   dvh tracks the dynamic mobile viewport (URL bar show/hide, insets); the vh
+   line is the fallback for engines without dvh. */
 :root,
 body,
 #root {
-  height: 100%;
   width: 100%;
+  height: 100vh;
+  height: 100dvh;
 }

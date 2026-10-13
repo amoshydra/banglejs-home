@@ -53,6 +53,12 @@ const Shell = () => (
       height: 100%;
       display: flex;
       flex-direction: column;
+      /* With viewport-fit=cover the WebView can reach the screen edges, so
+         keep content clear of notches / rounded corners. These are 0 inside
+         Gadgetbridge (the native ActionBar already insets the WebView). */
+      padding-top: env(safe-area-inset-top);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
     `}
   >
     <OperationGuard />

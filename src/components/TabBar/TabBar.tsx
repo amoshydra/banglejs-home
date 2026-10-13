@@ -36,6 +36,8 @@ export const TabBar = () => {
         display: flex;
         background: #2b2b2b;
         border-top: 1px solid rgba(255, 255, 255, 0.07);
+        /* Keep the tabs above the home indicator / gesture bar. */
+        padding-bottom: env(safe-area-inset-bottom);
       `}
     >
       {tabs.map(tab => (
