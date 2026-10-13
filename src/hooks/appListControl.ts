@@ -1,9 +1,16 @@
 import { useCallback, useState } from "react";
-import { AppListControlValue } from "../components/AppListControlsHeader/AppListControlsHeader";
 import { InputMethod, filterControlMap, sortControl, deviceFilterControl, DeviceFilter } from "../data/appListControlOptions";
 import { AppItem } from "../api/banglejs/interface";
-import { BangleJsAppFilter, BangleJsAppSortType } from "../api/banglejs/methods";
+import { BangleJsAppFilter, BangleJsAppFilterMap, BangleJsAppSortType } from "../api/banglejs/methods";
 
+/** The whole Apps-tab list control state (search + filters + sort). */
+export interface AppListControlValue {
+  /** Raw search text, kept separately so the search field can be controlled. */
+  searchText: string;
+  filters: BangleJsAppFilterMap;
+  sortedBy: BangleJsAppSortType;
+  deviceFilter: DeviceFilter;
+}
 
 const extractDefaultValue = <T,>(inputMethod: InputMethod<T>) => {
   if ('options' in inputMethod) {
@@ -21,6 +28,7 @@ const extractDefaultValue = <T,>(inputMethod: InputMethod<T>) => {
 }
 
 const getInitialControlState = (): AppListControlValue => ({
+  searchText: "",
   filters: (
     Object.fromEntries(
       Object.entries(filterControlMap)
@@ -45,6 +53,17 @@ export const useAppListControl = () => {
     }));
   }, []);
 
+  const setSearchText = useCallback((searchText: string) => {
+    setControl(control => ({
+      ...control,
+      searchText,
+      filters: {
+        ...control.filters,
+        __search: filterControlMap.__search.inputMethod.filter(searchText),
+      },
+    }));
+  }, []);
+
   const setSortedBy = useCallback((sortedBy: BangleJsAppSortType) => {
     setControl(control => ({
       ...control,
@@ -60,9 +79,11 @@ export const useAppListControl = () => {
   }, []);
 
   return {
+    searchText: control.searchText,
     sortedBy: control.sortedBy,
     filters: control.filters,
     deviceFilter: control.deviceFilter,
+    setSearchText,
     setFilter,
     setSortedBy,
     setDeviceFilter,

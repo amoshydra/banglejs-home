@@ -1,13 +1,13 @@
 import { useApps, useSortedApps, filterApps } from '../../api/banglejs/methods';
 import { AppList } from '../../components/AppList';
-import { AppListControlsHeader } from '../../components/AppListControlsHeader/AppListControlsHeader';
-import { Layout } from '../../components/Layout';
+import { AppToolbar } from '../../components/AppToolbar/AppToolbar';
 import { useParams } from 'react-router-dom';
 import { useAppListControl } from '../../hooks/appListControl';
 import { useEspruinoDeviceInfoStore } from '../../services/Espruino/stores/EspruinoDevice';
 import { filterControlMap } from '../../data/appListControlOptions';
 import { isUpdateAvailable } from '../../api/banglejs/updates';
 import { lazy, Suspense, useEffect, useMemo } from 'react';
+import { css } from '@emotion/react';
 
 // The detail view pulls in the markdown pipeline (remark/rehype/highlight),
 // so load it on demand instead of in the initial bundle.
@@ -18,7 +18,16 @@ const AppListItemDetailView = lazy(() =>
 
 function App() {
   const device = useEspruinoDeviceInfoStore(state => state.device);
-  const { filters, setFilter, sortedBy, setSortedBy, deviceFilter, setDeviceFilter } = useAppListControl();
+  const {
+    searchText,
+    filters,
+    setSearchText,
+    setFilter,
+    sortedBy,
+    setSortedBy,
+    deviceFilter,
+    setDeviceFilter,
+  } = useAppListControl();
   const { data: apps } = useApps();
   const { data: sortedApps, error, isLoading } = useSortedApps(sortedBy);
 
@@ -55,36 +64,47 @@ function App() {
   }, [device, filters.supports, setFilter]);
 
   return (
-    <Layout
-      top={
-        <AppListControlsHeader
-          filters={filters}
-          sortedBy={sortedBy}
-          onFilterChange={setFilter}
-          onSortedByChange={setSortedBy}
-          deviceFilter={deviceFilter}
-          onDeviceFilterChange={setDeviceFilter}
-        />
-      }
+    <div
+      css={css`
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      `}
     >
-      <>
-        { appId && (
-          <Suspense fallback={null}>
-            <AppListItemDetailView
-              apps={apps}
-              appId={appId}
-              error={error}
-              isLoading={isLoading}
-            />
-          </Suspense>
-        )}
+      <AppToolbar
+        searchText={searchText}
+        filters={filters}
+        sortedBy={sortedBy}
+        deviceFilter={deviceFilter}
+        onSearchChange={setSearchText}
+        onFilterChange={setFilter}
+        onSortedByChange={setSortedBy}
+        onDeviceFilterChange={setDeviceFilter}
+      />
+      <div
+        css={css`
+          flex: 1 1 auto;
+          min-height: 0;
+        `}
+      >
         <AppList
           data={filteredApps}
           error={error}
           isLoading={isLoading}
         />
-      </>
-    </Layout>
+      </div>
+      { appId && (
+        <Suspense fallback={null}>
+          <AppListItemDetailView
+            apps={apps}
+            appId={appId}
+            error={error}
+            isLoading={isLoading}
+          />
+        </Suspense>
+      )}
+    </div>
   )
 }
 

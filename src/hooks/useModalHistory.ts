@@ -38,9 +38,14 @@ export const useModalHistory = (open: boolean, onDismiss: () => void) => {
     return () => {
       window.removeEventListener("popstate", handlePopState);
       if (active) {
-        // Closed programmatically (not via back): drop the entry we pushed.
+        // Closed programmatically (not via back): drop the entry we pushed -
+        // but only if it is still the current entry. If the app navigated
+        // somewhere else while the modal was open, that entry is gone and
+        // calling back() would undo the user's navigation.
         active = false;
-        window.history.back();
+        if ((window.history.state as { __modal?: boolean } | null)?.__modal === true) {
+          window.history.back();
+        }
       }
     };
   }, [open]);

@@ -82,7 +82,11 @@ declare const Comms: {
   disconnectDevice: () => void;
   watchConnectionChange: (cb: (connected: boolean) => void) => void;
 
-  listFiles: UnknownFunction;
+  /**
+   * List file names in the watch's Storage. Pass { sf: true } to list the
+   * append-style "storage files" instead of the normal entries.
+   */
+  listFiles: (options?: { sf?: boolean }) => Promise<string[]>;
   readTextBlock: UnknownFunction;
 
   readFile: (filename: string) => Promise<string>;
