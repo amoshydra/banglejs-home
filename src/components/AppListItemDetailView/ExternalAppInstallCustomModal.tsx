@@ -6,6 +6,7 @@ import { EspruinoPuck } from "../../services/Espruino/Puck";
 import { EspruinoProgress } from "../../services/Espruino/Progress";
 import { EspruinoUtils } from "../../services/Espruino/Utils";
 import { useEspruinoDeviceInfoStore } from "../../services/Espruino/stores/EspruinoDevice";
+import { useModalHistory } from "../../hooks/useModalHistory";
 
 interface EspruinoCustomUiOptions {
   jsFile: "interface.js" | "customize.js";
@@ -137,6 +138,8 @@ const CustomIframe = (props: CustomIframe) => {
 };
 
 export const ExternalAppInstallCustomModal = (p: ExternalAppInstallCustomModalProps) => {
+  useModalHistory(p.visible, p.onDismiss);
+
   if (!p.visible) {
     return null;
   }

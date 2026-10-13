@@ -5,7 +5,7 @@ import {
   RouterProvider,
   Route,
   Outlet,
-  redirect,
+  Navigate,
 } from "react-router-dom";
 import App from './views/Apps';
 import { SWRConfig } from 'swr';
@@ -25,9 +25,7 @@ const router = createHashRouter(
     >
       <Route
         path=""
-        loader={() => {
-          throw redirect("/apps");
-        }}
+        element={<Navigate to="/apps" replace />}
       />
       <Route
         path="/apps"
