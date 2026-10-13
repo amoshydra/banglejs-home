@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { confirmLeaveOperation } from "../services/operations";
 
 /**
  * Make a state-only modal participate in browser / Android back navigation.
@@ -24,6 +25,11 @@ export const useModalHistory = (open: boolean, onDismiss: () => void) => {
 
     const handlePopState = () => {
       if (!active) return;
+      if (!confirmLeaveOperation()) {
+        // cancelled: put back the entry we just left so the modal stays open
+        window.history.pushState({ ...(window.history.state ?? {}), __modal: true }, "");
+        return;
+      }
       active = false;
       dismissRef.current();
     };

@@ -16,6 +16,7 @@ import { setActiveApp } from "../../services/Espruino/setActiveApp";
 import { isUpdateAvailable } from "../../api/banglejs/updates";
 import { isFirmwareApp, versionLess } from "../../services/Espruino/firmware";
 import { installApp, updateInstalledApp } from "../../services/Espruino/appInstall";
+import { runOperation } from "../../services/operations";
 
 interface ControlButtonProps extends AppDetailViewProps {
   device: EspruinoDevice;
@@ -249,10 +250,12 @@ const UninstallControlButton = (props: ControlButtonProps) => {
           if (removing) return;
           setRemoving(true);
           try {
-            if (!props.device) {
-              await EspruinoComms.getDeviceInfo();
-            }
-            await EspruinoComms.removeApp(props.app)
+            await runOperation(`Removing ${props.app.name ?? props.app.id}`, async () => {
+              if (!props.device) {
+                await EspruinoComms.getDeviceInfo();
+              }
+              await EspruinoComms.removeApp(props.app)
+            });
             await refresh();
           } catch (error) {
             alert((error as Error).message);

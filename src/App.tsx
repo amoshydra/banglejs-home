@@ -11,6 +11,7 @@ import App from './views/Apps';
 import { SWRConfig } from 'swr';
 import { GlobalProgressToaster } from './services/GlobalProgress';
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
+import { OperationGuard } from './components/OperationGuard/OperationGuard';
 import { EspruinoComms } from './services/Espruino/Comms';
 import { useEspruinoDeviceInfoStore } from './services/Espruino/stores/EspruinoDevice';
 import { useShallow } from 'zustand/react/shallow';
@@ -22,6 +23,7 @@ const router = createHashRouter(
   createRoutesFromElements(
     <Route
       path="/"
+      element={<><OperationGuard /><Outlet /></>}
     >
       <Route
         path=""

@@ -2,6 +2,7 @@ import { AppItem } from "../../api/banglejs/interface";
 import { EspruinoDevice } from "./interface";
 import { EspruinoComms } from "./Comms";
 import { assertFirmwareSupported } from "./firmware";
+import { runOperation } from "../operations";
 
 export interface InstallAppOptions {
   app: AppItem;
@@ -65,16 +66,18 @@ const removeObsoleteFiles = async (app: AppItem) => {
 };
 
 /** Install an app (and any missing dependencies) onto the device. */
-export const installApp = async ({ app, apps, device, noFinish }: InstallAppOptions) => {
-  assertFirmwareSupported(app, device.version);
-  await installDependencies(app, apps, device);
-  await EspruinoComms.uploadApp(app, { device, noFinish });
-};
+export const installApp = ({ app, apps, device, noFinish }: InstallAppOptions) =>
+  runOperation(`Installing ${app.name ?? app.id}`, async () => {
+    assertFirmwareSupported(app, device.version);
+    await installDependencies(app, apps, device);
+    await EspruinoComms.uploadApp(app, { device, noFinish });
+  });
 
 /** Update an already-installed app: drop obsolete files, then install. */
-export const updateInstalledApp = async ({ app, apps, device }: InstallAppOptions) => {
-  assertFirmwareSupported(app, device.version);
-  await removeObsoleteFiles(app);
-  await installDependencies(app, apps, device);
-  await EspruinoComms.uploadApp(app, { device });
-};
+export const updateInstalledApp = ({ app, apps, device }: InstallAppOptions) =>
+  runOperation(`Updating ${app.name ?? app.id}`, async () => {
+    assertFirmwareSupported(app, device.version);
+    await removeObsoleteFiles(app);
+    await installDependencies(app, apps, device);
+    await EspruinoComms.uploadApp(app, { device });
+  });

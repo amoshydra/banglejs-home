@@ -7,6 +7,7 @@ import { EspruinoProgress } from "../../services/Espruino/Progress";
 import { EspruinoUtils } from "../../services/Espruino/Utils";
 import { useEspruinoDeviceInfoStore } from "../../services/Espruino/stores/EspruinoDevice";
 import { useModalHistory } from "../../hooks/useModalHistory";
+import { runOperation } from "../../services/operations";
 
 interface EspruinoCustomUiOptions {
   jsFile: "interface.js" | "customize.js";
@@ -123,7 +124,7 @@ const CustomIframe = (props: CustomIframe) => {
             });
           } else if (message.type == "writestorage") {
             EspruinoProgress.show({ title: `Uploading ${JSON.stringify(message.filename)}`, sticky: true });
-            EspruinoComms.writeFile(message.filename, message.data).then(function () {
+            runOperation("Writing to watch", () => EspruinoComms.writeFile(message.filename, message.data)).then(function () {
               EspruinoProgress.hide({ sticky: true });
               iframe.contentWindow?.postMessage({
                 type: "writestoragersp",
