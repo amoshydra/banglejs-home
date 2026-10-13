@@ -91,13 +91,18 @@ const CustomIframe = (props: CustomIframe) => {
               });
             });
           } else if (message.type == "write") {
-            EspruinoPuck.write(message.data, function (result) {
-              iframe.contentWindow?.postMessage({
-                type: "writersp",
-                data: result,
-                id: message.id
+            // Arbitrary watch write from a custom page - mark it busy so a
+            // back press during it gets confirmed.
+            runOperation("Writing to watch", () => new Promise<void>(resolve => {
+              EspruinoPuck.write(message.data, function (result) {
+                iframe.contentWindow?.postMessage({
+                  type: "writersp",
+                  data: result,
+                  id: message.id
+                });
+                resolve();
               });
-            });
+            }));
           } else if (message.type == "readstoragefile") {
             EspruinoComms.readStorageFile(message.filename).then(function (result) {
               iframe.contentWindow?.postMessage({
