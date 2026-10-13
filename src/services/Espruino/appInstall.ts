@@ -3,6 +3,7 @@ import { EspruinoDevice } from "./interface";
 import { EspruinoComms } from "./Comms";
 import { assertFirmwareSupported } from "./firmware";
 import { runOperation } from "../operations";
+import { EspruinoAppInfo } from "./AppInfo";
 
 export interface InstallAppOptions {
   app: AppItem;
@@ -36,12 +37,29 @@ const installDependencies = async (app: AppItem, apps: AppItem[], device: Esprui
 };
 
 /**
+ * The data files a new version no longer declares, as a `<id>.info` "data"
+ * string ("dataFiles;storageFiles"). Only the obsolete entries are returned so
+ * removeApp erases just those; files the app still uses are kept. Mirrors
+ * upstream updateApp.
+ */
+export const obsoleteDataString = (app: AppItem, installedData: string | undefined): string => {
+  const data = EspruinoAppInfo.parseDataString(installedData);
+  const declared = app.data;
+
+  if (declared !== undefined) {
+    const stillDeclared = (file: string) =>
+      declared.some(entry => (entry.name ?? entry.wildcard) === file);
+    data.dataFiles = data.dataFiles.filter(file => !stillDeclared(file));
+    data.storageFiles = data.storageFiles.filter(file => !stillDeclared(file));
+  }
+
+  return EspruinoAppInfo.makeDataString(data);
+};
+
+/**
  * Remove files left over from a previous version that the new version no
- * longer ships, so an update doesn't leave stale files behind.
- *
- * Mirrors upstream updateApp, except data files are left alone: our app
- * metadata has no per-app data-file list to diff against, and erasing data
- * we can't re-create would lose user data.
+ * longer ships, so an update doesn't leave stale files behind. Covers both the
+ * app's script files and its data files. Mirrors upstream updateApp.
  */
 const removeObsoleteFiles = async (app: AppItem) => {
   let installedInfo: { id?: string; files?: string; data?: string } | null;
@@ -50,17 +68,20 @@ const removeObsoleteFiles = async (app: AppItem) => {
   } catch {
     return; // couldn't read appinfo; fall back to a plain re-upload
   }
-  if (!installedInfo || typeof installedInfo.files !== "string") return;
+  if (!installedInfo) return;
 
-  const obsoleteFiles = installedInfo.files
+  const installedFiles = typeof installedInfo.files === "string" ? installedInfo.files : "";
+  const obsoleteFiles = installedFiles
     .split(",")
     .filter(file => file !== "" && file !== `${app.id}.info`)
     .filter(file => !app.storage.some(storage => storage.name === file));
 
-  if (!obsoleteFiles.length) return;
+  const obsoleteData = obsoleteDataString(app, installedInfo.data);
+
+  if (!obsoleteFiles.length && !obsoleteData) return;
 
   await EspruinoComms.removeApp(
-    { ...installedInfo, id: app.id, files: obsoleteFiles.join(","), data: "" },
+    { ...installedInfo, id: app.id, files: obsoleteFiles.join(","), data: obsoleteData },
     { containsFileList: true, noReset: true, noFinish: true },
   );
 };

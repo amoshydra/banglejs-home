@@ -266,7 +266,10 @@ const UninstallControlButton = (props: ControlButtonProps) => {
               if (!props.device) {
                 await EspruinoComms.getDeviceInfo();
               }
-              await EspruinoComms.removeApp(props.app)
+              // removeApp re-reads <id>.info from the watch, so only the id
+              // is needed here (passing the whole AppItem would clash with
+              // its `data` field, which is an array in apps.json).
+              await EspruinoComms.removeApp({ id: props.app.id })
             });
             await refresh();
           } catch (error) {

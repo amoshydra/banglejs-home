@@ -58,7 +58,12 @@ describe("BangleApps submodule integration contract", () => {
   });
 
   it("core/js/appinfo.js exposes AppInfo", () => {
-    expect(read("core/js/appinfo.js")).toContain("AppInfo");
+    const appinfo = read("core/js/appinfo.js");
+    expect(appinfo).toContain("AppInfo");
+    // Data-file pruning on update diffs <id>.info "data" against apps.json.
+    for (const method of ["parseDataString", "makeDataString"]) {
+      expect(appinfo, `AppInfo.${method}`).toContain(method);
+    }
   });
 
   it("android.html still contains the Gadgetbridge patch marker", () => {

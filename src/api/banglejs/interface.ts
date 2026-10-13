@@ -44,6 +44,15 @@ export interface AppItem {
   dependencies: Record<string, string>;
   storage: AppItemStorage[];
   /**
+   * Data files the app reads/writes on the watch. Entries are either an exact
+   * `name` or a `wildcard` pattern, and `storageFile: true` marks files kept
+   * in the Storage "open" filesystem rather than plain Storage.
+   *
+   * @example [{ "name": "one_button_presses.csv", "storageFile": true }]
+   * @example [{ "wildcard": "accellog.?.csv" }]
+   */
+  data?: AppItemData[];
+  /**
    * @example "custom.html"
    */
   custom?: string;
@@ -72,6 +81,15 @@ export interface AppItemStorage {
   name: string;
   url: string;
   evaluate?: boolean;
+}
+
+export interface AppItemData {
+  /** Exact file name, eg "one_button_presses.csv" */
+  name?: string;
+  /** Glob-style pattern, eg "accellog.?.csv" */
+  wildcard?: string;
+  /** True if the file lives in the Storage "open" filesystem */
+  storageFile?: boolean;
 }
 
 export interface AppUsage {
