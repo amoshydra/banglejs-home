@@ -1,0 +1,68 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "react"],
+  "categories": {
+    "correctness": "error"
+  },
+  "env": {
+    "browser": true
+  },
+  "ignorePatterns": ["dist/**", "public/externals/**"],
+  "rules": {
+    // ---------------------------------------------------------------------
+    // @eslint/js recommended rules that oxlint files outside `correctness`.
+    // (`no-undef`/`no-redeclare` are omitted: typescript-eslint's
+    // `eslint-recommended` disables them for TS files, and TS covers them.)
+    // `no-dupe-args` and `no-octal` are legacy rules with no oxlint
+    // equivalent; TypeScript's parser rejects both at compile time.
+    // ---------------------------------------------------------------------
+    "no-case-declarations": "error",
+    "no-empty": "error",
+    "no-fallthrough": "error",
+    "no-prototype-builtins": "error",
+    "no-regex-spaces": "error",
+    "no-unexpected-multiline": "error",
+    "no-useless-assignment": "error",
+    "preserve-caught-error": "error",
+
+    // ---------------------------------------------------------------------
+    // typescript-eslint recommended (non type-checked) rules that oxlint
+    // files outside `correctness`. The rest are covered by `correctness`.
+    // `@typescript-eslint/no-unused-vars`, `no-unused-expressions` and
+    // `no-array-constructor` map onto oxlint's core `no-unused-vars`,
+    // `no-unused-expressions` and `no-array-constructor`.
+    // ---------------------------------------------------------------------
+    "typescript/ban-ts-comment": "error",
+    "typescript/no-empty-object-type": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-namespace": "error",
+    "typescript/no-require-imports": "error",
+    "typescript/no-unnecessary-type-constraint": "error",
+    "typescript/no-unsafe-function-type": "error",
+    "no-array-constructor": "error",
+    "no-var": "error",
+    "prefer-const": "error",
+    "prefer-rest-params": "error",
+    "prefer-spread": "error",
+
+    // ---------------------------------------------------------------------
+    // eslint-plugin-react-hooks v7 `recommended` (React Compiler).
+    // The correctness-category rules (static-components, use-memo,
+    // preserve-manual-memoization, incompatible-library, immutability,
+    // globals, refs, set-state-in-effect, error-boundaries, purity,
+    // set-state-in-render) are already enabled by the `correctness` category.
+    // `react-hooks/config` and `react-hooks/gating` have no oxlint
+    // equivalent; they validate the compiler's own gating configuration and
+    // have nothing to check in this app.
+    // ---------------------------------------------------------------------
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn",
+    "react/unsupported-syntax": "warn",
+
+    // ---------------------------------------------------------------------
+    // eslint-plugin-react-refresh `only-export-components` is implemented
+    // natively by oxlint as `react/only-export-components`.
+    // ---------------------------------------------------------------------
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}

@@ -107,14 +107,6 @@ export const DeviceControl = () => {
             onDismiss={() => {
               setDeviceInforModalVisible(false);
             }}
-            children={
-              <DeviceView
-                css={css`
-                  padding: 1rem;
-                `}
-                device={device}
-              />
-            }
             bottom={
               <div
                 css={css`
@@ -130,7 +122,14 @@ export const DeviceControl = () => {
                 >Disconnect device</UiButton>
               </div>
             }
-          />
+          >
+            <DeviceView
+              css={css`
+                padding: 1rem;
+              `}
+              device={device}
+            />
+          </Modal>
         )
       }
     </>

@@ -56,17 +56,16 @@ export const Modal = (p: ModalProps) => {
             </div>
           </div>
         }
-        children={
-          <div
-            css={css`
-              height: 100%;
-            `}
-          >
-            {p.children}
-          </div>
-        }
         bottom={p.bottom}
-      />
+      >
+        <div
+          css={css`
+            height: 100%;
+          `}
+        >
+          {p.children}
+        </div>
+      </Layout>
     </dialog>
   )
 };

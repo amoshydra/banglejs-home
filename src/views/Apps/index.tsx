@@ -66,26 +66,25 @@ function App() {
           onDeviceFilterChange={setDeviceFilter}
         />
       }
-      children={
-        <>
-          { appId && (
-            <Suspense fallback={null}>
-              <AppListItemDetailView
-                apps={apps}
-                appId={appId}
-                error={error}
-                isLoading={isLoading}
-              />
-            </Suspense>
-          )}
-          <AppList
-            data={filteredApps}
-            error={error}
-            isLoading={isLoading}
-          />
-        </>
-      }
-    />
+    >
+      <>
+        { appId && (
+          <Suspense fallback={null}>
+            <AppListItemDetailView
+              apps={apps}
+              appId={appId}
+              error={error}
+              isLoading={isLoading}
+            />
+          </Suspense>
+        )}
+        <AppList
+          data={filteredApps}
+          error={error}
+          isLoading={isLoading}
+        />
+      </>
+    </Layout>
   )
 }
 
