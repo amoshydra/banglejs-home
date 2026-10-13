@@ -19,4 +19,22 @@ export default defineConfig({
     // default entry inference crawl them breaks dependency pre-bundling.
     entries: ['index.html'],
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Pull the React runtime, the router and emotion into their own
+        // long-lived chunks so they survive app-code changes in the cache.
+        // Returning undefined for everything else leaves rolldown's
+        // automatic splitting alone - in particular the lazily imported
+        // detail view (and its markdown pipeline) stays a separate chunk.
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined;
+          if (/[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/.test(id)) return 'react';
+          if (/[\\/]node_modules[\\/]react-router(-dom)?[\\/]/.test(id)) return 'router';
+          if (/[\\/]node_modules[\\/]@emotion[\\/]/.test(id)) return 'emotion';
+          return undefined;
+        },
+      },
+    },
+  },
 })
