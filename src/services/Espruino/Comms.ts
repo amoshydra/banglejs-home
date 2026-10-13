@@ -51,14 +51,14 @@ declare const Comms: {
 
   getDeviceInfo: (noReset?: boolean) => Promise<EspruinoCommsGetDeviceInfoResponse>
 
-  getAppInfo: UnknownFunction;
+  getAppInfo: (app: Pick<AppItem, "id">) => Promise<{ id?: string; files?: string; data?: string } | null>;
 
-  removeApp: (app: AppItem, options?: {
+  removeApp: (app: { id: string; files?: string; data?: string }, options?: {
     /**
      * if true, don't get data from watch
      * @default false
      */
-    containsFileList: boolean;
+    containsFileList?: boolean;
     /**
      * if true, showUploadFinished isn't called (displaying the reboot message)
      * @default false

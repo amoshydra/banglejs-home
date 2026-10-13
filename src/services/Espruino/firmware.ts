@@ -42,3 +42,19 @@ export const isBangleJS2 = (deviceId?: string): boolean => deviceId === "BANGLEJ
 
 /** The firmware updater app. */
 export const isFirmwareApp = (app: { id?: string }): boolean => app.id === "fwupdate";
+
+/**
+ * Throw when an app requires a newer firmware than the connected device
+ * runs. Mirrors the check upstream does before uploading an app.
+ */
+export const assertFirmwareSupported = (
+  app: { id?: string; name?: string; requires_firmware?: string },
+  deviceVersion?: string,
+): void => {
+  if (!app.requires_firmware || !deviceVersion) return;
+  if (!versionLess(deviceVersion, app.requires_firmware)) return;
+
+  throw new Error(
+    `"${app.name ?? app.id}" requires firmware ${app.requires_firmware} or higher (you have ${deviceVersion}). Update your firmware first.`,
+  );
+};

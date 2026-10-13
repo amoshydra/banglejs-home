@@ -15,6 +15,7 @@ import { ActivateAppButton } from "./AppStorageController/Buttons/ActivateAppBut
 import { setActiveApp } from "../../services/Espruino/setActiveApp";
 import { isUpdateAvailable } from "../../api/banglejs/updates";
 import { isFirmwareApp, versionLess } from "../../services/Espruino/firmware";
+import { installApp, updateInstalledApp } from "../../services/Espruino/appInstall";
 
 interface ControlButtonProps extends AppDetailViewProps {
   device: EspruinoDevice;
@@ -39,30 +40,17 @@ const InstallControlButton = (props: ControlButtonProps) => {
 
   const install = async () => {
     if (installing) return;
-    if (requiresNewerFirmware) {
-      alert(`App "${props.app.name}" requires firmware ${props.app.requires_firmware} or higher. You have ${props.device.version}. Please update your firmware first.`);
-      return;
-    }
     setInstalling(true);
     try {
-      const device = props.device;
+      const { app, apps, device, hasUpdate } = props;
 
-      for (const dependencyAppId of Object.keys(props.app.dependencies ?? {})) {
-        const hasInstalled = device.appsInstalled.find(app => app.id === dependencyAppId);
-        if (hasInstalled) continue;
-
-        const dependencyApp = props.apps.find(app => app.id === dependencyAppId);
-        if (!dependencyApp) {
-          throw new Error(`dependency required "${dependencyAppId}" is not found`);
-        }
-
-        await EspruinoComms.uploadApp(dependencyApp, { device });
-        // TODO: Implement dependency clash with the usage of provide_modules
-        // see AppInfo.checkDependencies
+      if (hasUpdate) {
+        await updateInstalledApp({ app, apps, device });
+      } else {
+        await installApp({ app, apps, device });
       }
 
-      await EspruinoComms.uploadApp(props.app, { device });
-      await setActiveApp(props.app);
+      await setActiveApp(app);
       await refresh();
     } catch (error) {
       alert((error as Error).message);
@@ -190,13 +178,15 @@ const CustomConfigureControlButton = (props: ControlButtonProps) => {
                 console.log("Received custom app", app);
                 setUiVisible(false);
 
-                EspruinoComms.uploadApp(app, {
+                installApp({
+                  app,
+                  apps: props.apps,
                   device,
                   // Custom pages (eg the firmware updater) can ask the loader to
                   // skip its "hold to reload" finish step; upstream forwards
                   // msg.options.noFinish the same way (see handleCustomApp).
                   noFinish: msg.options?.noFinish,
-                });
+                }).catch(error => alert((error as Error).message));
               }
             }
           }}

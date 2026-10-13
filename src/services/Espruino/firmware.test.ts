@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  assertFirmwareSupported,
   isBangleJS2,
   isFirmwareApp,
   latestFirmwareVersion,
@@ -57,5 +58,20 @@ describe("isBangleJS2", () => {
     expect(isBangleJS2("BANGLEJS2")).toBe(true);
     expect(isBangleJS2("BANGLEJS")).toBe(false);
     expect(isBangleJS2(undefined)).toBe(false);
+  });
+});
+
+describe("assertFirmwareSupported", () => {
+  it("throws when the device firmware is older than the app requires", () => {
+    expect(() =>
+      assertFirmwareSupported({ id: "loadanim", name: "Load Anim", requires_firmware: "2v29" }, "2v20"),
+    ).toThrow(/requires firmware 2v29/);
+  });
+
+  it("passes when the firmware is new enough, absent, or unknown", () => {
+    expect(() => assertFirmwareSupported({ requires_firmware: "2v29" }, "2v29")).not.toThrow();
+    expect(() => assertFirmwareSupported({ requires_firmware: "2v29" }, "2v30")).not.toThrow();
+    expect(() => assertFirmwareSupported({ id: "x" }, "2v20")).not.toThrow();
+    expect(() => assertFirmwareSupported({ id: "x", requires_firmware: "2v29" }, undefined)).not.toThrow();
   });
 });
