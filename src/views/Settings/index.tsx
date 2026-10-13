@@ -7,6 +7,9 @@ import { css } from "@emotion/react";
  * carries the About content that used to have nowhere to live.
  */
 export const SettingsScreen = () => {
+  const sha = __COMMIT_SHA__;
+  const shaIsCommit = /^[0-9a-f]{7,40}$/i.test(sha);
+
   return (
     <div
       css={css`
@@ -34,10 +37,23 @@ export const SettingsScreen = () => {
           line-height: 1.7;
         `}
       >
-        <li><a href="https://banglejs.com" target="_blank" rel="noreferrer">banglejs.com</a></li>
-        <li><a href="https://github.com/espruino/BangleApps" target="_blank" rel="noreferrer">espruino/BangleApps</a></li>
         <li><a href="https://github.com/amoshydra/banglejs-home" target="_blank" rel="noreferrer">amoshydra/banglejs-home</a></li>
+        <li><a href="https://github.com/espruino/BangleApps" target="_blank" rel="noreferrer">espruino/BangleApps</a></li>
+        <li><a href="https://banglejs.com" target="_blank" rel="noreferrer">banglejs.com</a></li>
       </ul>
+
+      <p css={css`font-size: 0.85rem;`}>
+        <span css={css`opacity: 0.6;`}>commit</span>{" "}
+        {shaIsCommit ? (
+          <a
+            href={`https://github.com/amoshydra/banglejs-home/commit/${sha}`}
+            target="_blank"
+            rel="noreferrer"
+          ><code>{sha}</code></a>
+        ) : (
+          <code>{sha}</code>
+        )}
+      </p>
     </div>
   );
 };

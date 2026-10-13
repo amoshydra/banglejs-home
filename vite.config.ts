@@ -1,11 +1,26 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { execSync } from 'node:child_process'
 
 const BASE_URL = process.env.BASE_URL || '';
+
+// Short commit SHA, shown in Settings. Prefer an explicit env var (CI), else
+// read it from git, else fall back.
+const COMMIT_SHA = (() => {
+  if (process.env.VITE_COMMIT_SHA) return process.env.VITE_COMMIT_SHA;
+  try {
+    return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+  } catch {
+    return 'unknown';
+  }
+})();
 
 // https://vitejs.dev/config/
 export default defineConfig({
   base: `${BASE_URL}/`,
+  define: {
+    __COMMIT_SHA__: JSON.stringify(COMMIT_SHA),
+  },
   plugins: [react({
     jsxImportSource: "@emotion/react",
     babel: {

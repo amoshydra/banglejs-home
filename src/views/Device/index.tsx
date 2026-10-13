@@ -1,16 +1,27 @@
 import { css } from "@emotion/react";
+import { faStopwatch } from "@fortawesome/free-solid-svg-icons";
 import { UiButton } from "../../components/Buttons/UiButton";
 import { DeviceView } from "../../components/Device/DeviceView";
+import { DeviceRequiredState } from "../../components/DeviceRequiredState/DeviceRequiredState";
 import { useEspruinoDeviceInfoStore } from "../../services/Espruino/stores/EspruinoDevice";
 import { useLatestFirmware } from "../../hooks/useLatestFirmware";
 import { isBangleJS2, versionLess } from "../../services/Espruino/firmware";
 
 export const DeviceScreen = () => {
-  const { connectionPending, device, connect, disconnect } = useEspruinoDeviceInfoStore();
+  const device = useEspruinoDeviceInfoStore(state => state.device);
+  const disconnect = useEspruinoDeviceInfoStore(state => state.disconnect);
   const { latest } = useLatestFirmware();
 
+  if (!device) {
+    return (
+      <DeviceRequiredState
+        icon={faStopwatch}
+        message="Connect a watch to see its firmware, installed apps and console."
+      />
+    );
+  }
+
   const firmwareUpdateAvailable =
-    !!device &&
     isBangleJS2(device.id) &&
     typeof device.version === "string" &&
     latest !== null &&
@@ -59,14 +70,9 @@ export const DeviceScreen = () => {
           css={css`
             margin-left: auto;
           `}
-          disabled={connectionPending}
-          onClick={() => {
-            if (connectionPending) return;
-            if (device) return disconnect();
-            return connect();
-          }}
+          onClick={() => disconnect()}
         >
-          {connectionPending ? "connecting..." : device ? "Disconnect" : "Connect"}
+          Disconnect
         </UiButton>
       </div>
 
@@ -78,15 +84,7 @@ export const DeviceScreen = () => {
           padding: 0 1rem 1rem;
         `}
       >
-        {device ? (
-          <DeviceView device={device} />
-        ) : (
-          <p
-            css={css`
-              opacity: 0.6;
-            `}
-          >No watch connected. Connect to see firmware, installed apps and a live console.</p>
-        )}
+        <DeviceView device={device} />
       </div>
     </div>
   );

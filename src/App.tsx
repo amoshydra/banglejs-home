@@ -8,10 +8,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { css } from "@emotion/react";
-import AppsView from './views/Apps';
-import { FilesScreen } from './views/Files';
-import { DeviceScreen } from './views/Device';
-import { SettingsScreen } from './views/Settings';
+import { lazy, Suspense, useEffect } from 'react';
 import { TabBar } from './components/TabBar/TabBar';
 import { SWRConfig } from 'swr';
 import { GlobalProgressToaster } from './services/GlobalProgress';
@@ -20,9 +17,30 @@ import { OperationGuard } from './components/OperationGuard/OperationGuard';
 import { EspruinoComms } from './services/Espruino/Comms';
 import { useEspruinoDeviceInfoStore } from './services/Espruino/stores/EspruinoDevice';
 import { useShallow } from 'zustand/react/shallow';
-import { useEffect } from 'react';
 import { useGadgetBridgeConnector } from './services/GadgetbridgeConnector';
 import { localStorageProvider } from './services/CacheStorage';
+
+// Each tab is its own chunk - only the shell (and the tab you're on) loads up
+// front. Apps already lazy-loads the markdown-heavy detail view on top of this.
+const AppsView = lazy(() => import('./views/Apps'));
+const FilesScreen = lazy(() =>
+  import('./views/Files').then(m => ({ default: m.FilesScreen })));
+const DeviceScreen = lazy(() =>
+  import('./views/Device').then(m => ({ default: m.DeviceScreen })));
+const SettingsScreen = lazy(() =>
+  import('./views/Settings').then(m => ({ default: m.SettingsScreen })));
+
+const RouteFallback = () => (
+  <div
+    css={css`
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.6;
+    `}
+  >Loading…</div>
+);
 
 /**
  * App shell: the only navigation chrome we add. Inside Gadgetbridge the native
@@ -46,7 +64,9 @@ const Shell = () => (
         flex-direction: column;
       `}
     >
-      <Outlet />
+      <Suspense fallback={<RouteFallback />}>
+        <Outlet />
+      </Suspense>
     </main>
     <TabBar />
   </div>

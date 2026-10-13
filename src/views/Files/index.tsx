@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder, faMagnifyingGlass, faRotate, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { UiButton } from "../../components/Buttons/UiButton";
 import { BottomSheet } from "../../components/BottomSheet/BottomSheet";
+import { DeviceRequiredState } from "../../components/DeviceRequiredState/DeviceRequiredState";
 import { useEspruinoDeviceInfoStore } from "../../services/Espruino/stores/EspruinoDevice";
 import { runOperation } from "../../services/operations";
 import { errorMessage } from "../../services/errorMessage";
@@ -36,8 +37,6 @@ const iconButtonCss = css`
 
 export const FilesScreen = () => {
   const device = useEspruinoDeviceInfoStore(state => state.device);
-  const connectionPending = useEspruinoDeviceInfoStore(state => state.connectionPending);
-  const connect = useEspruinoDeviceInfoStore(state => state.connect);
 
   const [query, setQuery] = useState("");
   const [openFile, setOpenFile] = useState<WatchFile | null>(null);
@@ -64,25 +63,10 @@ export const FilesScreen = () => {
 
   if (!device) {
     return (
-      <div
-        css={css`
-          flex: 1 1 auto;
-          min-height: 0;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 1rem;
-          padding: 2rem;
-          text-align: center;
-        `}
-      >
-        <FontAwesomeIcon icon={faFolder} size="2x" css={css`opacity: 0.4;`} />
-        <p css={css`opacity: 0.6; margin: 0;`}>Connect a watch to browse its files.</p>
-        <UiButton disabled={connectionPending} onClick={() => connect()}>
-          {connectionPending ? "connecting..." : "Connect"}
-        </UiButton>
-      </div>
+      <DeviceRequiredState
+        icon={faFolder}
+        message="Connect a watch to browse its files."
+      />
     );
   }
 
