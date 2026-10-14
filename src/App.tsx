@@ -19,6 +19,7 @@ import { useEspruinoDeviceInfoStore } from './services/Espruino/stores/EspruinoD
 import { useShallow } from 'zustand/react/shallow';
 import { useGadgetBridgeConnector } from './services/GadgetbridgeConnector';
 import { localStorageProvider } from './services/CacheStorage';
+import { safeArea } from './services/safeArea';
 
 // Each tab is its own chunk - only the shell (and the tab you're on) loads up
 // front. Apps already lazy-loads the markdown-heavy detail view on top of this.
@@ -54,11 +55,12 @@ const Shell = () => (
       display: flex;
       flex-direction: column;
       /* With viewport-fit=cover the WebView can reach the screen edges, so
-         keep content clear of notches / rounded corners. These are 0 inside
-         Gadgetbridge (the native ActionBar already insets the WebView). */
-      padding-top: env(safe-area-inset-top);
-      padding-left: env(safe-area-inset-left);
-      padding-right: env(safe-area-inset-right);
+         keep content clear of notches / rounded corners. Inside Gadgetbridge
+         the native layer already pads for these, so safeArea() returns 0
+         there to avoid double padding. */
+      padding-top: ${safeArea("top")};
+      padding-left: ${safeArea("left")};
+      padding-right: ${safeArea("right")};
     `}
   >
     <OperationGuard />

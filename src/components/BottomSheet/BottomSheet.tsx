@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import { ReactNode, useLayoutEffect, useRef } from "react";
 import { useModalHistory } from "../../hooks/useModalHistory";
+import { safeArea } from "../../services/safeArea";
 
 export interface BottomSheetProps {
   open: boolean;
@@ -66,9 +67,9 @@ export const BottomSheet = ({ open, onDismiss, label, children, maxHeight = "85%
         box-shadow: 0 -8px 26px rgba(0, 0, 0, 0.5);
         overflow: hidden;
         /* Sheets sit in the top layer, outside the shell's padding. */
-        padding-bottom: env(safe-area-inset-bottom);
-        padding-left: env(safe-area-inset-left);
-        padding-right: env(safe-area-inset-right);
+        padding-bottom: ${safeArea("bottom")};
+        padding-left: ${safeArea("left")};
+        padding-right: ${safeArea("right")};
 
         &[open] {
           display: flex;

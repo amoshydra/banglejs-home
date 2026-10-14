@@ -4,6 +4,7 @@ import { Layout } from "../Layout";
 import { UiButton } from "../Buttons/UiButton";
 import { ButtonIconContainer } from "../Buttons/ButtonIconContainer";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { safeArea } from "../../services/safeArea";
 
 export interface ModalProps {
   top?: ReactNode;
@@ -80,9 +81,9 @@ export const Modal = (p: ModalProps) => {
 const cssDialog = css`
   padding: 0;
   /* Clear the notch / home indicator when edge-to-edge. */
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+  padding-bottom: ${safeArea("bottom")};
+  padding-left: ${safeArea("left")};
+  padding-right: ${safeArea("right")};
   width: 75rem;
   height: 100rem;
   border: none;

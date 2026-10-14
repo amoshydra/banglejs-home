@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder, faGear, faLayerGroup, faStopwatch } from "@fortawesome/free-solid-svg-icons";
 import { IconDefinition } from "@fortawesome/fontawesome-common-types";
 import { useEspruinoDeviceInfoStore } from "../../services/Espruino/stores/EspruinoDevice";
+import { safeArea } from "../../services/safeArea";
 
 interface TabDefinition {
   to: string;
@@ -37,7 +38,7 @@ export const TabBar = () => {
         background: #2b2b2b;
         border-top: 1px solid rgba(255, 255, 255, 0.07);
         /* Keep the tabs above the home indicator / gesture bar. */
-        padding-bottom: env(safe-area-inset-bottom);
+        padding-bottom: ${safeArea("bottom")};
       `}
     >
       {tabs.map(tab => (
